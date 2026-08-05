@@ -6,21 +6,23 @@
   <title>Tournaments — BArena</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+ <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/base.css"/>
- <link rel="stylesheet" href="assets/css/Tournaments.css"/>
+<link rel="stylesheet" href="assets/css/tournaments.css"/>
 </head>
 <body>
 
 <nav>
-  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="tournaments.html" class="active">Tournaments</a></li>
-    <li><a href="calendar.html">Calendar</a></li>
-    <li><a href="gallery.html">Gallery</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
+  <div class="brand">BAR<span>ENA</span></div>
+  <div class="navlinks">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="tournaments.html">Tournaments</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+  </div>
+  <a class="nav-cta" href="kiambu/s04/">Register</a>
 </nav>
 
 <div class="page-hero">
@@ -70,7 +72,7 @@
   // ─── CONFIG ────────────────────────────────────────────────
   // Replace these with your actual Supabase credentials
   const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
-  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
   // ──────────────────────────────────────────────────────────
 
   const { createClient } = supabase;
@@ -83,8 +85,10 @@
   // ─── FETCH ─────────────────────────────────────────────────
   async function loadTournaments() {
     const { data: events, error } = await db
-      .from('events')
-      .select('*')
+      .from('tournaments')
+      .select('id, name, slug, status, start_date, end_date, venue, sport_id, institution_id, is_public')
+      .eq('is_public', true)
+      .not('start_date', 'is', null)
       .order('start_date', { ascending: false });
 
     if (error) {
@@ -95,17 +99,19 @@
 
     // Fetch registration counts per event
     const { data: regCounts } = await db
-      .from('registrations')
-      .select('event_id, payment_status');
+      .from('category_entries')
+      .select('payment_status, categories!inner(tournament_id)');
 
     // Build count maps
     const totalMap = {};
     const confirmedMap = {};
     if (regCounts) {
       regCounts.forEach(r => {
-        totalMap[r.event_id] = (totalMap[r.event_id] || 0) + 1;
+        const tid = r.categories?.tournament_id;
+        if (!tid) return;
+        totalMap[tid] = (totalMap[tid] || 0) + 1;
         if (r.payment_status === 'confirmed') {
-          confirmedMap[r.event_id] = (confirmedMap[r.event_id] || 0) + 1;
+          confirmedMap[tid] = (confirmedMap[tid] || 0) + 1;
         }
       });
     }
@@ -123,8 +129,8 @@
 
   // ─── REALTIME ──────────────────────────────────────────────
   function subscribeRealtime() {
-    db.channel('registrations-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => {
+   db.channel('registrations-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => {
         loadTournaments(); // reload on any change
       })
       .subscribe();
@@ -132,9 +138,9 @@
 
   // ─── COUNTS ────────────────────────────────────────────────
   function updateStatChips() {
-    document.getElementById('count-live').textContent     = allEvents.filter(e => e.status === 'live').length;
+   document.getElementById('count-live').textContent     = allEvents.filter(e => e.status === 'ongoing').length;
     document.getElementById('count-upcoming').textContent = allEvents.filter(e => e.status === 'upcoming').length;
-    document.getElementById('count-past').textContent     = allEvents.filter(e => e.status === 'past').length;
+    document.getElementById('count-past').textContent     = allEvents.filter(e => e.status === 'completed').length;
   }
 
   // ─── FILTER & RENDER ───────────────────────────────────────
@@ -142,8 +148,9 @@
     const grid = document.getElementById('tournaments-grid');
     let filtered = allEvents;
 
-    if (activeStatus !== 'all') {
-      filtered = filtered.filter(e => e.status === activeStatus);
+  if (activeStatus !== 'all') {
+      const statusMap = { live: 'ongoing', upcoming: 'upcoming', past: 'completed' };
+      filtered = filtered.filter(e => e.status === (statusMap[activeStatus] || activeStatus));
     }
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
@@ -174,7 +181,9 @@
     const dateStr = formatDate(e.start_date, e.end_date);
     const ctaLabel = e.status === 'past' ? 'View Results' : 'Register';
     const ctaClass = e.status === 'past' ? 'card-cta past' : 'card-cta';
-    const ctaHref = e.status !== 'past' ? (e.registration_url || 'kiambu/s04/index.html') : '#';
+   const ctaHref = e.slug === 'banana-smash-s04' ? 'kiambu/s04/index.html'
+                  : e.slug?.startsWith('banana-smash') ? 'kiambu/index.html'
+                  : '#';
 
     return `
     <a class="t-card" href="${ctaHref}">

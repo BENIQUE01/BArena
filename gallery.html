@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/base.css"/>
+  <link rel="stylesheet" href="assets/css/gallery.css"/>
 </head>
 <body>
 
@@ -68,13 +69,13 @@
 
   async function loadGallery() {
     const [{ data: photos, error: pe }, { data: events }] = await Promise.all([
-      db.from('event_photos').select('*').order('created_at', { ascending: false }),
-      db.from('events').select('id, name, edition, season_number, county')
+db.from('event_photos').select('id, image_url, caption, tournament_id, created_at').order('created_at', { ascending: false }),
+     db.from('tournaments').select('id, name, slug, status, start_date')
     ]);
 
     if (pe) { renderError(); return; }
 
-    // Build event map
+// Build tournament map
     (events || []).forEach(e => { allEvents[e.id] = e; });
 
     allPhotos = photos || [];
@@ -85,7 +86,7 @@
 
   function buildEventFilter() {
     const container = document.getElementById('event-filter');
-    const eventIds = [...new Set(allPhotos.map(p => p.event_id).filter(Boolean))];
+const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean))];
 
     eventIds.forEach(id => {
       const e = allEvents[id];
@@ -115,7 +116,7 @@
     const section = document.getElementById('gallery-section');
     const filtered = activeEventId === 'all'
       ? allPhotos
-      : allPhotos.filter(p => p.event_id == activeEventId);
+: allPhotos.filter(p => p.tournament_id == activeEventId);
 
     if (filtered.length === 0) {
       section.innerHTML = `
@@ -130,7 +131,7 @@
     // Group by event
     const groups = {};
     filtered.forEach(p => {
-      const key = p.event_id || '__none__';
+ const key = p.tournament_id || '__none__';
       if (!groups[key]) groups[key] = [];
       groups[key].push(p);
     });
@@ -139,8 +140,8 @@
 
     section.innerHTML = Object.entries(groups).map(([eventId, photos]) => {
       const e = allEvents[eventId];
-      const eventLabel = e
-        ? `${e.name || e.edition || 'Event'}${e.season_number ? ' — Season ' + e.season_number : ''}${e.county ? ' · ' + e.county : ''}`
+    const eventLabel = e
+        ? `${e.name || 'Event'}${e.start_date ? ' · ' + new Date(e.start_date).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' }) : ''}`
         : 'Photos';
 
       return `

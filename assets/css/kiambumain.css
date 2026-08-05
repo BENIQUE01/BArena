@@ -1,0 +1,394 @@
+/* ============================================================
+   kiambumain.css
+   KITTA Hub — Kiambu/index.html page styles
+   Depends on: base.css
+   Author: Benique Creation
+   Last updated: 2026-08-05
+   ============================================================ */
+    /* ── KITTA HUB STYLES ── */
+    :root {
+      --gold: #F5C542;
+      --gold-dim: rgba(245,197,66,0.15);
+      --gold-border: rgba(245,197,66,0.25);
+    }
+
+    /* HERO */
+    .kitta-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 80px 24px 64px;
+      text-align: center;
+      background: var(--bg);
+    }
+    .kitta-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,66,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .kitta-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-border);
+      background: var(--gold-dim);
+      border-radius: 999px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .kitta-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 11vw, 100px);
+      line-height: .92;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+    .kitta-hero h1 span { color: var(--gold); }
+    .kitta-hero .sub {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-stat .lab {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* DIVIDER */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto 32px;
+      padding: 0 24px;
+    }
+    .section-divider .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .section-divider .line {
+      flex: 1;
+      height: 1px;
+      background: var(--gold-border);
+    }
+
+    /* SEASONS GRID */
+    .seasons-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+    .seasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* SEASON CARD */
+    .season-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: border-color .2s, transform .15s;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .season-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .season-card:hover { border-color: var(--gold-border); transform: translateY(-2px); }
+    .season-card:hover::before { opacity: 1; }
+    .season-card.upcoming { border-color: rgba(255,106,61,0.3); }
+    .season-card.upcoming::before { opacity: 1; background: var(--accent); }
+    .season-card.locked {
+      opacity: .45;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .sc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .sc-season-num {
+      font-family: var(--font-display);
+      font-size: 48px;
+      line-height: 1;
+      color: var(--text-dim);
+      opacity: .25;
+    }
+    .sc-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .pill-completed { background: rgba(100,200,100,0.12); color: #6dc96d; border: 1px solid rgba(100,200,100,0.2); }
+    .pill-upcoming  { background: rgba(255,106,61,0.12);  color: var(--accent); border: 1px solid rgba(255,106,61,0.25); }
+    .pill-coming    { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .sc-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .sc-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: .06em;
+      margin-bottom: 16px;
+    }
+    .sc-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .sc-meta-item { font-size: 12px; color: var(--text-dim); }
+    .sc-meta-item strong { color: var(--text); font-weight: 600; }
+    .sc-venue {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      letter-spacing: .04em;
+    }
+    .sc-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ABOUT KITTA */
+    .about-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .about-card .ac-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .about-card p {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* MEMBER CLUBS */
+    .clubs-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    .clubs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .club-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .club-chip .cc-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .club-chip .cc-name {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .club-chip .cc-type {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-season {
+      font-family: var(--font-display);
+      font-size: 48px;
+      color: var(--gold);
+      opacity: .3;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .modal-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .modal-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: .06em;
+      margin-bottom: 24px;
+    }
+    .modal-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .modal-stat {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .modal-stat .num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .modal-stat .lab {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .modal-venue {
+      font-size: 13px;
+      color: var(--text-dim);
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      letter-spacing: .04em;
+    }
+
+    /* SKELETON */
+    .skel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      height: 160px;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: .4; }
+      50% { opacity: .7; }
+    }

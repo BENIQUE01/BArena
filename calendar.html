@@ -135,9 +135,11 @@
     const day = d.getDate();
     const mon = d.toLocaleDateString('en-KE', { month: 'short' });
     const statusClass = `pill-${e.status}`;
-    const statusLabel = e.status === 'live' ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
-    const href = e.slug === 'banana-smash-s04' ? '../../kiambu/s04/index.html'
-               : e.slug === 'banana-smash-s2-1782044002661' ? '../../kiambu/s02/index.html'
+    const statusLabel = e.status === 'upcoming' ? 'Upcoming'
+                      : e.status === 'ongoing'  ? 'Live'
+                      : 'Completed';
+   const href = e.slug === 'banana-smash-s04' ? 'kiambu/s04/index.html'
+               : e.slug === 'banana-smash-s2-1782044002661' ? 'kiambu/s02/index.html'
                : '#';
 
     return `

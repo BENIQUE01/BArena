@@ -17,6 +17,12 @@
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;}
 .live-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:10px 20px;font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .3s ease forwards;white-space:nowrap;}
+.toast.out{animation:toastOut .4s ease forwards;}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-10px);}}
 </style>
 </head>
 <body>
@@ -139,10 +145,14 @@
 
   </div>
 
-  <footer>
+ <footer>
     <div class="org">BARENA — Kiambu County · Phase 01</div>
     Hosted with ACK Emanuel Church Karuri, Diocese of Mount Kenya South
+    <div style="margin-top:16px;">
+      <button class="btn btn-ghost" id="share-btn" style="font-size:13px;">🔗 Share This Tournament</button>
+    </div>
   </footer>
+  <div class="toast-container" id="toast-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -175,7 +185,7 @@
 
     // Live updates: refresh counts the moment any new entry is added, by anyone
     sb.channel('category_entries_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => { refreshCounts(); loadConfirmedPlayers(); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => { refreshCountsWithMilestones(); loadConfirmedPlayers(); })
       .subscribe();
 
     // ---- REGISTRATION SUBMIT ----
@@ -259,6 +269,55 @@
           </div>`;
       }).join('');
     }
+
+// ---- MILESTONE TOASTS ----
+    const MILESTONES = [5, 10, 20, 30, 50, 100];
+    let lastKnownTotal = null;
+
+    function showToast(msg, duration = 4000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('out');
+        setTimeout(() => toast.remove(), 400);
+      }, duration);
+    }
+
+    function checkMilestones(newTotal) {
+      if (lastKnownTotal === null) { lastKnownTotal = newTotal; return; }
+      MILESTONES.forEach(m => {
+        if (lastKnownTotal < m && newTotal >= m) {
+          showToast(`🔥 ${m} players registered! Spots filling fast.`);
+        }
+      });
+      lastKnownTotal = newTotal;
+    }
+
+    // Patch refreshCounts to also check milestones
+    const _origRefresh = refreshCounts;
+    async function refreshCountsWithMilestones() {
+      await _origRefresh();
+      const total = parseInt(document.getElementById('count-total').textContent) || 0;
+      checkMilestones(total);
+    }
+
+    // ---- SHARE BUTTON ----
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      const shareData = {
+        title: 'Banana Smash S04 — BArena',
+        text: '🏓 Banana Smash Season 04 is live! Aug 22–23 at ACK Emanuel Church Karuri. Register now.',
+        url: window.location.href
+      };
+      if (navigator.share) {
+        try { await navigator.share(shareData); } catch (_) {}
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('🔗 Link copied to clipboard!');
+      }
+    });
 
   </script>
 

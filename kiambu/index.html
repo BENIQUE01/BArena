@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kiambu TTA — Banana Smash Series</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../assets/css/base.css"/>
+<link rel="stylesheet" href="../assets/css/kiambumain.css"/>
+</head>
+<body>
+
+<nav>
+  <div class="brand">BAR<span>ENA</span></div>
+  <div class="navlinks">
+    <a href="../index.html">Home</a>
+    <a href="../features.html">Features</a>
+    <a href="../tournaments.html">Tournaments</a>
+    <a href="../calendar.html">Calendar</a>
+    <a href="../gallery.html">Gallery</a>
+    <a href="../about.html">About</a>
+  </div>
+  <a class="nav-cta" href="s04/">Register S04</a>
+</nav>
+
+<!-- HERO -->
+<div class="kitta-hero">
+  <div class="kitta-eyebrow">⚡ Kiambu County · Official Hub</div>
+  <h1>Banana<br/><span>Smash</span></h1>
+  <div class="sub">Kiambu Table Tennis Association · Est. 2026</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num" id="stat-seasons">—</div>
+      <div class="lab">Seasons</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" id="stat-players">—</div>
+      <div class="lab">Total Entries</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" id="stat-clubs">5</div>
+      <div class="lab">Member Clubs</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" id="stat-next">Aug 22</div>
+      <div class="lab">Next Event</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEASONS -->
+<div class="section-divider">
+  <span class="label">All Seasons</span>
+  <div class="line"></div>
+</div>
+
+<div class="seasons-wrap">
+  <div class="seasons-grid" id="seasons-grid">
+    <div class="skel"></div>
+    <div class="skel"></div>
+    <div class="skel"></div>
+    <div class="skel"></div>
+  </div>
+</div>
+
+<!-- ABOUT KITTA -->
+<div class="section-divider">
+  <span class="label">About KITTA</span>
+  <div class="line"></div>
+</div>
+
+<div class="about-wrap">
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="ac-label">Who We Are</div>
+      <p>The Kiambu Table Tennis Association (KITTA) is the organizing body for competitive table tennis in Kiambu County — bringing together clubs, schools, and academies under one banner.</p>
+    </div>
+    <div class="about-card">
+      <div class="ac-label">The Banana Smash Series</div>
+      <p>An open inter-club tournament series running multiple seasons per year. Any registered player from any club can enter — all skill levels welcome, with category-based competition and real cash prizes.</p>
+    </div>
+    <div class="about-card">
+      <div class="ac-label">Powered by BArena</div>
+      <p>All KITTA tournaments are managed and scored live using the BArena app — real-time brackets, live scoring, and official results published instantly.</p>
+    </div>
+    <div class="about-card">
+      <div class="ac-label">Venue</div>
+      <p>Home base at ACK Emmanuel Church, Karuri Parish — a central venue accessible to clubs across Kiambu County with dedicated table tennis facilities.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBER CLUBS -->
+<div class="section-divider">
+  <span class="label">Member Clubs</span>
+  <div class="line"></div>
+</div>
+
+<div class="clubs-wrap">
+  <div class="clubs-grid">
+    <div class="club-chip">
+      <div class="cc-icon">🏓</div>
+      <div class="cc-name">Spin Squad TTC</div>
+      <div class="cc-type">Club</div>
+    </div>
+    <div class="club-chip">
+      <div class="cc-icon">🏓</div>
+      <div class="cc-name">Two Rivers TTC</div>
+      <div class="cc-type">Club</div>
+    </div>
+    <div class="club-chip">
+      <div class="cc-icon">🏫</div>
+      <div class="cc-name">Karuri High</div>
+      <div class="cc-type">School</div>
+    </div>
+    <div class="club-chip">
+      <div class="cc-icon">🏫</div>
+      <div class="cc-name">Kibathi Comprehensive</div>
+      <div class="cc-type">School</div>
+    </div>
+    <div class="club-chip">
+      <div class="cc-icon">🏫</div>
+      <div class="cc-name">Kiambaa Primary</div>
+      <div class="cc-type">School</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-season" id="modal-season-num"></div>
+    <div class="modal-name" id="modal-name"></div>
+    <div class="modal-date" id="modal-date"></div>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="num" id="modal-entries">—</div>
+        <div class="lab">Entries</div>
+      </div>
+      <div class="modal-stat">
+        <div class="num" id="modal-cats">—</div>
+        <div class="lab">Categories</div>
+      </div>
+      <div class="modal-stat">
+        <div class="num" id="modal-days">1</div>
+        <div class="lab">Day(s)</div>
+      </div>
+    </div>
+    <div class="modal-venue" id="modal-venue"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="org">KIAMBU TABLE TENNIS ASSOCIATION</div>
+  Powered by BArena · ACK Emmanuel Church Karuri, Kiambu County
+</footer>
+
+<script>
+  const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
+  const KITTA_ID      = 'f8518a6d-9963-4e3b-9548-d7e1374174f9';
+  const S04_ID        = '0412efac-41e8-4071-9a55-c4029bb70e7d';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  // Season display metadata
+  const SEASON_META = {
+    'banana-smash-s1':                    { num: 'S01', label: 'Banana Smash S1',       link: null },
+    'banana-smash-s2-1782044002661':      { num: 'S02', label: 'Banana Smash S2',       link: null },
+    'banana-smash-knockout-1782057777575':{ num: 'KO',  label: 'Banana Smash Knockout', link: null },
+    'banana-smash-s3':                    { num: 'S03', label: 'Banana Smash S3',       link: null },
+    'banana-smash-s04':                   { num: 'S04', label: 'Banana Smash S04',      link: 's04/' },
+  };
+
+  let allSeasons = [];
+
+  async function load() {
+    const { data: tournaments, error } = await db
+      .from('tournaments')
+      .select('id, name, slug, status, start_date, end_date, venue')
+      .eq('institution_id', KITTA_ID)
+      .order('start_date', { ascending: true });
+
+    if (error || !tournaments) { renderError(); return; }
+
+    // Get entry counts per tournament via categories
+    const { data: entries } = await db
+      .from('category_entries')
+      .select('category_id, categories!inner(tournament_id, id)');
+
+    // Count entries per tournament
+    const entryMap = {};
+    const catMap = {};
+    if (entries) {
+      entries.forEach(e => {
+        const tid = e.categories?.tournament_id;
+        const cid = e.categories?.id;
+        if (tid) entryMap[tid] = (entryMap[tid] || 0) + 1;
+        if (cid && tid) {
+          if (!catMap[tid]) catMap[tid] = new Set();
+          catMap[tid].add(cid);
+        }
+      });
+    }
+
+    allSeasons = tournaments.map(t => ({
+      ...t,
+      total_entries: entryMap[t.id] || 0,
+      total_cats: catMap[t.id]?.size || 0,
+    }));
+
+    // Update hero stats
+    const totalEntries = allSeasons.reduce((s, t) => s + t.total_entries, 0);
+    document.getElementById('stat-seasons').textContent = allSeasons.length;
+    document.getElementById('stat-players').textContent = totalEntries;
+
+    renderSeasons();
+  }
+
+  function formatDate(start, end) {
+    if (!start) return 'Date TBA';
+    const s = new Date(start);
+    const opts = { day: 'numeric', month: 'short', year: 'numeric' };
+    if (!end || end === start) return s.toLocaleDateString('en-KE', opts);
+    const e = new Date(end);
+    return `${s.toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })} – ${e.toLocaleDateString('en-KE', opts)}`;
+  }
+
+  function daysBetween(start, end) {
+    if (!start || !end) return 1;
+    const diff = new Date(end) - new Date(start);
+    return Math.max(1, Math.round(diff / 86400000) + 1);
+  }
+
+  function renderSeasons() {
+    const grid = document.getElementById('seasons-grid');
+    const cards = allSeasons.map(t => {
+      const meta = SEASON_META[t.slug] || { num: '??', label: t.name, link: null };
+      const isUpcoming = t.status === 'upcoming';
+      const statusClass = isUpcoming ? 'upcoming' : 'completed';
+      const pillClass = isUpcoming ? 'pill-upcoming' : 'pill-completed';
+      const pillLabel = isUpcoming ? 'Upcoming' : 'Completed';
+      const venueStr = t.venue ? `📍 ${t.venue}` : '📍 Venue TBA';
+
+      const inner = `
+        <div class="sc-top">
+          <div class="sc-season-num">${meta.num}</div>
+          <span class="sc-pill ${pillClass}">${pillLabel}</span>
+        </div>
+        <div class="sc-name">${meta.label}</div>
+        <div class="sc-date">${formatDate(t.start_date, t.end_date)}</div>
+        <div class="sc-meta">
+          <div class="sc-meta-item"><strong>${t.total_entries}</strong> entries</div>
+          <div class="sc-meta-item"><strong>${t.total_cats || '—'}</strong> categories</div>
+        </div>
+        <div class="sc-venue">${venueStr}</div>
+        ${meta.link ? `<div class="sc-cta">View & Register →</div>` : `<div class="sc-cta" style="color:var(--text-dim)">View Archive →</div>`}
+      `;
+
+      if (meta.link) {
+        return `<a class="season-card ${statusClass}" href="${meta.link}">${inner}</a>`;
+      } else {
+        return `<div class="season-card ${statusClass}" data-id="${t.id}" onclick="openModal('${t.id}')">${inner}</div>`;
+      }
+    });
+
+    // Add a "Coming Soon" card for S05
+    cards.push(`
+      <div class="season-card locked">
+        <div class="sc-top">
+          <div class="sc-season-num">S05</div>
+          <span class="sc-pill pill-coming">Coming Soon</span>
+        </div>
+        <div class="sc-name">Banana Smash S5</div>
+        <div class="sc-date">Date TBA</div>
+        <div class="sc-meta">
+          <div class="sc-meta-item" style="color:var(--text-dim)">Registrations open soon</div>
+        </div>
+      </div>
+    `);
+
+    grid.innerHTML = cards.join('');
+  }
+
+  function openModal(id) {
+    const t = allSeasons.find(s => s.id === id);
+    if (!t) return;
+    const meta = SEASON_META[t.slug] || { num: '??', label: t.name };
+    document.getElementById('modal-season-num').textContent = meta.num;
+    document.getElementById('modal-name').textContent = meta.label;
+    document.getElementById('modal-date').textContent = formatDate(t.start_date, t.end_date);
+    document.getElementById('modal-entries').textContent = t.total_entries;
+    document.getElementById('modal-cats').textContent = t.total_cats || '—';
+    document.getElementById('modal-days').textContent = daysBetween(t.start_date, t.end_date);
+    document.getElementById('modal-venue').textContent = t.venue ? `📍 ${t.venue}` : '📍 Venue not recorded';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  document.getElementById('modal-close').addEventListener('click', () => {
+    document.getElementById('modal-overlay').classList.remove('open');
+  });
+  document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-overlay'))
+      document.getElementById('modal-overlay').classList.remove('open');
+  });
+
+  function renderError() {
+    document.getElementById('seasons-grid').innerHTML = `<div style="color:var(--text-dim);font-family:var(--font-mono);font-size:13px;padding:24px;">Failed to load seasons — check Supabase connection.</div>`;
+  }
+
+  load();
+</script>
+</body>
+</html>

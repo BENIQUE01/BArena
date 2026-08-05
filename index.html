@@ -70,13 +70,12 @@
     <div class="navlinks">
       <a href="index.html">Home</a>
       <a href="features.html">Features</a>
-      <a href="gallery.html">Gallery</a>
       <a href="tournaments.html">Tournaments</a>
       <a href="calendar.html">Calendar</a>
+      <a href="gallery.html">Gallery</a>
       <a href="about.html">About</a>
     </div>
     <a class="nav-cta" href="kiambu/s04/">Register</a>
-    <a class="nav-cta" href="admin/kiambu/s04.html">Admin</a>
   </nav>
 
   <header class="hero">
@@ -429,10 +428,15 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function updateCounters() {
+      const CATEGORY_IDS_LIST = [
+        "a6843ff0-0643-4328-800c-f27065e8df4d",
+        "6b34289d-b1e9-4700-bb39-fc109573147b",
+        "9bc6d79a-f673-46e0-930c-484c0bb0d974"
+      ];
       const { data, error } = await sb
         .from('category_entries')
-        .select('id, payment_status')
-        .eq('tournament_id', TOURNAMENT_ID);
+        .select('id, payment_status, category_id')
+        .in('category_id', CATEGORY_IDS_LIST);
       if (error) return;
       const total     = data?.length || 0;
       const confirmed = data?.filter(r => r.payment_status === 'confirmed').length || 0;
