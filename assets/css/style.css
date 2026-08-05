@@ -26,7 +26,7 @@
      2. Replace the URL below with: url('images/hero.jpg')
      Or swap the whole header.hero rule below to use a <video>
      instead (see notes in the HTML comment above the hero section). */
-  --hero-image: url('assets/images/hero.jpg');
+  --hero-image: url('../images/hero.jpg');
 }
 /* ============================================================
    END THEME CONFIG
@@ -150,8 +150,8 @@ section{padding:64px 0;}
 .slide{width:25%; aspect-ratio:16/8; background-size:cover; background-position:center; position:relative;}
 .slide::after{content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.55), transparent 45%);}
 .slide .cap{position:absolute; bottom:18px; left:22px; z-index:2; font-family:var(--font-mono); font-size:12.5px; letter-spacing:.06em; color:var(--text);}
-.slide1{background-image:url('images/slide1.jpg');}
-.slide2{background-image:url('images/slide2.jpg');}
+.slide1{background-image:url('../images/slide1.jpg');}
+.slide2{background-image:url('../images/slide2.jpg');}
 .slide3{background-image:url('https://images.unsplash.com/photo-1560089168-6516081ba64f?q=80&w=1974&auto=format&fit=crop');}
 .slide4{background-image:url('https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=1974&auto=format&fit=crop');}
 .carousel-arrow{
