@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tournaments — BArena</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+ <link rel="stylesheet" href="assets/css/Tournaments.css"/>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="tournaments.html" class="active">Tournaments</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <h1>All <span>Tournaments</span></h1>
+  <p>Browse every hosted and sponsored tournament across counties and sports — filter by status, location, or sport.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-chip">
+    <div class="dot dot-live"></div>
+    <strong id="count-live">—</strong>
+    <span>Live Now</span>
+  </div>
+  <div class="stat-chip">
+    <div class="dot dot-upcoming"></div>
+    <strong id="count-upcoming">—</strong>
+    <span>Upcoming</span>
+  </div>
+  <div class="stat-chip">
+    <div class="dot dot-past"></div>
+    <strong id="count-past">—</strong>
+    <span>Past</span>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search tournaments…"/>
+  </div>
+  <div class="filter-group" id="status-filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="live">🔴 Live</button>
+    <button class="filter-btn" data-filter="upcoming">⏳ Upcoming</button>
+    <button class="filter-btn" data-filter="past">✓ Past</button>
+  </div>
+</div>
+
+<div class="tournaments-grid" id="tournaments-grid">
+  <!-- skeleton while loading -->
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+</div>
+
+<script>
+  // ─── CONFIG ────────────────────────────────────────────────
+  // Replace these with your actual Supabase credentials
+  const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+  // ──────────────────────────────────────────────────────────
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let allEvents = [];
+  let activeStatus = 'all';
+  let searchTerm = '';
+
+  // ─── FETCH ─────────────────────────────────────────────────
+  async function loadTournaments() {
+    const { data: events, error } = await db
+      .from('events')
+      .select('*')
+      .order('start_date', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      renderError();
+      return;
+    }
+
+    // Fetch registration counts per event
+    const { data: regCounts } = await db
+      .from('registrations')
+      .select('event_id, payment_status');
+
+    // Build count maps
+    const totalMap = {};
+    const confirmedMap = {};
+    if (regCounts) {
+      regCounts.forEach(r => {
+        totalMap[r.event_id] = (totalMap[r.event_id] || 0) + 1;
+        if (r.payment_status === 'confirmed') {
+          confirmedMap[r.event_id] = (confirmedMap[r.event_id] || 0) + 1;
+        }
+      });
+    }
+
+    allEvents = (events || []).map(e => ({
+      ...e,
+      total_registrations: totalMap[e.id] || 0,
+      confirmed_registrations: confirmedMap[e.id] || 0,
+    }));
+
+    updateStatChips();
+    render();
+    subscribeRealtime();
+  }
+
+  // ─── REALTIME ──────────────────────────────────────────────
+  function subscribeRealtime() {
+    db.channel('registrations-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => {
+        loadTournaments(); // reload on any change
+      })
+      .subscribe();
+  }
+
+  // ─── COUNTS ────────────────────────────────────────────────
+  function updateStatChips() {
+    document.getElementById('count-live').textContent     = allEvents.filter(e => e.status === 'live').length;
+    document.getElementById('count-upcoming').textContent = allEvents.filter(e => e.status === 'upcoming').length;
+    document.getElementById('count-past').textContent     = allEvents.filter(e => e.status === 'past').length;
+  }
+
+  // ─── FILTER & RENDER ───────────────────────────────────────
+  function render() {
+    const grid = document.getElementById('tournaments-grid');
+    let filtered = allEvents;
+
+    if (activeStatus !== 'all') {
+      filtered = filtered.filter(e => e.status === activeStatus);
+    }
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      filtered = filtered.filter(e =>
+        e.name?.toLowerCase().includes(q) ||
+        e.county?.toLowerCase().includes(q) ||
+        e.edition?.toLowerCase().includes(q) ||
+        e.venue?.toLowerCase().includes(q)
+      );
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">🏆</div>
+          <h3>No tournaments found</h3>
+          <p>Try adjusting your filters or search term.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(e => cardHTML(e)).join('');
+  }
+
+  function cardHTML(e) {
+    const statusClass = `status-${e.status}`;
+    const statusLabel = e.status === 'live' ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
+    const dateStr = formatDate(e.start_date, e.end_date);
+    const ctaLabel = e.status === 'past' ? 'View Results' : 'Register';
+    const ctaClass = e.status === 'past' ? 'card-cta past' : 'card-cta';
+    const ctaHref = e.status !== 'past' ? (e.registration_url || 'kiambu/s04/index.html') : '#';
+
+    return `
+    <a class="t-card" href="${ctaHref}">
+      <div class="card-top">
+        <span class="sport-badge">${e.sport || 'Sport'}</span>
+        <span class="status-badge ${statusClass}">
+          <div class="status-dot"></div>
+          ${statusLabel}
+        </span>
+      </div>
+      <div class="card-body">
+        <h3>${e.name || 'Tournament'}</h3>
+        <div class="card-edition">${e.edition ? e.edition + (e.season_number ? ' · Season ' + e.season_number : '') : ''}</div>
+        <div class="card-meta">
+          ${e.venue ? `<div class="meta-row"><span class="meta-icon">📍</span>${e.venue}, ${e.county || ''}</div>` : ''}
+          ${dateStr ? `<div class="meta-row"><span class="meta-icon">📅</span>${dateStr}</div>` : ''}
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="entry-count">
+          <span class="num">${e.total_registrations}</span>
+          <span class="label">Registered</span>
+        </div>
+        ${e.confirmed_registrations > 0 ? `
+        <div class="confirmed-count">
+          <span class="num">${e.confirmed_registrations}</span>
+          <span class="label">Confirmed ✓</span>
+        </div>` : ''}
+        <a class="${ctaClass}" href="${ctaHref}" onclick="event.stopPropagation()">
+          ${ctaLabel} →
+        </a>
+      </div>
+    </a>`;
+  }
+
+  function renderError() {
+    document.getElementById('tournaments-grid').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <h3>Couldn't load tournaments</h3>
+        <p>Check your Supabase credentials in the script config.</p>
+      </div>`;
+  }
+
+  function formatDate(start, end) {
+    if (!start) return '';
+    const s = new Date(start);
+    const opts = { day: 'numeric', month: 'short', year: 'numeric' };
+    if (!end) return s.toLocaleDateString('en-KE', opts);
+    const e = new Date(end);
+    if (s.toDateString() === e.toDateString()) return s.toLocaleDateString('en-KE', opts);
+    return `${s.toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })} – ${e.toLocaleDateString('en-KE', opts)}`;
+  }
+
+  // ─── FILTER BUTTONS ────────────────────────────────────────
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeStatus = btn.dataset.filter;
+      render();
+    });
+  });
+
+  document.getElementById('search-input').addEventListener('input', e => {
+    searchTerm = e.target.value.trim();
+    render();
+  });
+
+  loadTournaments();
+</script>
+</body>
+</html>

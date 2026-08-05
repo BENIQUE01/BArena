@@ -1,0 +1,175 @@
+/* ─── tournaments.css ─────────────────────────────────────── */
+/* Requires: base.css, shared.css */
+
+.stats-bar {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.stat-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-live     { background: var(--live);     box-shadow: 0 0 6px var(--live); animation: pulse 2s infinite; }
+.dot-upcoming { background: var(--upcoming); }
+.dot-past     { background: var(--past); }
+.stat-chip strong { color: var(--text); }
+.stat-chip span   { color: var(--muted); }
+
+.filters-bar {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box input::placeholder { color: var(--muted); }
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.filter-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.tournaments-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+/* CARD */
+.t-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+.t-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124,58,237,0.4);
+  box-shadow: 0 8px 32px rgba(124,58,237,0.12);
+}
+
+.card-top {
+  padding: 1.25rem 1.25rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.sport-badge {
+  background: rgba(124,58,237,0.15);
+  color: #a78bfa;
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-body { padding: 1rem 1.25rem 1.25rem; flex: 1; }
+.card-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.card-edition { color: var(--muted); font-size: 0.8rem; margin-bottom: 0.875rem; }
+
+.card-meta { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.meta-row { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.8rem; }
+.meta-icon { width: 14px; text-align: center; }
+
+.card-footer {
+  padding: 0.875rem 1.25rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entry-count { display: flex; flex-direction: column; }
+.entry-count .num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; line-height: 1; }
+.entry-count .label { font-size: 0.7rem; color: var(--muted); margin-top: 0.15rem; }
+
+.confirmed-count { display: flex; flex-direction: column; align-items: flex-end; }
+.confirmed-count .num { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--live); line-height: 1; }
+.confirmed-count .label { font-size: 0.7rem; color: var(--muted); margin-top: 0.15rem; }
+
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.card-cta:hover { opacity: 0.85; }
+.card-cta.past {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.skeleton-card { height: 280px; border-radius: 14px; }
+
+@media (max-width: 640px) {
+  .tournaments-grid { grid-template-columns: 1fr; }
+  .filters-bar { gap: 0.5rem; }
+}

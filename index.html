@@ -9,36 +9,87 @@
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/home.css">
 </head>
-<body>
+<body class="home-page">
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- TOP CAROUSEL — news / events / trophies                   -->
+  <!-- Add more slides by duplicating a .carousel-slide block    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="top-carousel" id="topCarousel">
+    <div class="carousel-track" id="carouselTrack">
+
+      <div class="carousel-slide is-active">
+        <img src="assets/images/slide1.jpg" alt="Banana Smash S04">
+        <div class="carousel-caption">
+          <div class="carousel-tag">
+            <span class="carousel-tag-dot"></span>
+            Live Now
+          </div>
+          <h2>Banana Smash S04</h2>
+          <p>Kiambu County's flagship table tennis tournament. Aug 22–23 · ACK Emanuel Church, Karuri.</p>
+          <a href="kiambu/s04/">Register Now →</a>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <img src="assets/images/slide2.jpg" alt="BARENA Platform">
+        <div class="carousel-caption">
+          <div class="carousel-tag">
+            <span class="carousel-tag-dot"></span>
+            Platform
+          </div>
+          <h2>Global Tournament Management</h2>
+          <p>From a local league to continental championships — one platform, infinite possibilities.</p>
+          <a href="features.html">Explore Features →</a>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <img src="assets/images/hero.jpg" alt="BARENA Arena">
+        <div class="carousel-caption">
+          <div class="carousel-tag">
+            <span class="carousel-tag-dot"></span>
+            Coming Soon
+          </div>
+          <h2>More Events on the Way</h2>
+          <p>Multi-sport festivals, national championships and county editions — all launching 2026.</p>
+          <a href="calendar.html">View Calendar →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="carousel-prev" id="carouselPrev" aria-label="Previous">&#8592;</button>
+    <button class="carousel-next" id="carouselNext" aria-label="Next">&#8594;</button>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <div class="carousel-fade-bottom"></div>
+  </div>
 
   <nav>
     <div class="brand">BAR<span>ENA</span></div>
     <div class="navlinks">
+      <a href="index.html">Home</a>
       <a href="features.html">Features</a>
       <a href="gallery.html">Gallery</a>
       <a href="tournaments.html">Tournaments</a>
       <a href="calendar.html">Calendar</a>
+      <a href="about.html">About</a>
     </div>
     <a class="nav-cta" href="kiambu/s04/">Register</a>
     <a class="nav-cta" href="admin/kiambu/s04.html">Admin</a>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- HERO — Immersive Entry Point                              -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
   <header class="hero">
     <div class="hero-bg">
       <div class="glow glow-1"></div>
       <div class="glow glow-2"></div>
       <div class="glow glow-3"></div>
     </div>
-    
     <div class="hero-inner">
       <div class="hero-badge">
         <span class="live-indicator"></span>
         Phase 01 — Kiambu Edition Live
       </div>
-      
       <div class="hero-headline">
         <h1 class="headline-main">
           <span class="word">Global</span>
@@ -47,7 +98,6 @@
         </h1>
         <p class="headline-sub">From a local league to continental championships — one platform, infinite possibilities</p>
       </div>
-
       <div class="hero-stats">
         <div class="hero-stat">
           <div class="stat-value">250+</div>
@@ -62,7 +112,6 @@
           <div class="stat-label">Live Updates</div>
         </div>
       </div>
-
       <div class="hero-ctas">
         <a class="btn btn-primary" href="kiambu/s04/">
           <span>Register for Banana Smash S04</span>
@@ -70,7 +119,6 @@
         </a>
         <a class="btn btn-ghost" href="features.html">Explore Features</a>
       </div>
-
       <div class="hero-scroll">
         <svg width="20" height="30" viewBox="0 0 20 30">
           <path stroke="var(--text-dim)" stroke-width="2" fill="none" d="M 10 3 L 10 20" stroke-linecap="round"/>
@@ -80,9 +128,6 @@
     </div>
   </header>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- SOCIAL PROOF — Live Metrics                               -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="metrics-strip">
     <div class="wrap">
       <div class="metrics-grid">
@@ -110,14 +155,8 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- MAIN CONTENT                                               -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="wrap">
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- FEATURED TOURNAMENT CARD                              -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section id="kiambu" class="featured-tournament">
       <div class="tournament-header">
         <div class="tournament-badge">
@@ -127,7 +166,6 @@
         <h2>Banana Smash S04</h2>
         <p class="tournament-desc">The flagship BARENA pilot. Table tennis at its finest, Aug 22–23, ACK Emanuel Church Karuri. Three categories, live bracket updates, real-time ELO tracking.</p>
       </div>
-
       <div class="tournament-showcase">
         <div class="showcase-left">
           <div class="live-counter-large">
@@ -143,7 +181,6 @@
           </div>
           <a class="btn btn-primary btn-large" href="kiambu/s04/">Register Now</a>
         </div>
-
         <div class="showcase-right">
           <div class="category-grid">
             <div class="category-card">
@@ -166,49 +203,43 @@
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- WHAT IS BARENA — Value Prop                           -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section class="value-prop-section">
       <div class="value-prop-header">
         <div class="section-kicker">Platform Overview</div>
         <h2 class="section-title">What is BARENA?</h2>
         <p class="section-desc">A unified tournament management system designed for scale. From a church league to a national championship — BARENA handles it.</p>
       </div>
-
       <div class="value-prop-grid">
         <div class="value-card">
           <div class="value-icon">📊</div>
           <h3>Real-Time Management</h3>
-          <p>Live scoreboards, instant bracket updates, and player ratings that change with every match. Transparency built in.</p>
+          <p>Live scoreboards, instant bracket updates, and player ratings that change with every match.</p>
         </div>
         <div class="value-card">
           <div class="value-icon">🏅</div>
           <h3>Player Progression</h3>
-          <p>ELO ratings, sport passports, and badges that carry meaning. Athletes build a permanent record across seasons.</p>
+          <p>ELO ratings, sport passports, and badges that carry meaning across seasons.</p>
         </div>
         <div class="value-card">
           <div class="value-icon">🎯</div>
           <h3>Flexible Formats</h3>
-          <p>Single & double elimination, round-robin, group stages, and custom formats. Configure any tournament structure in seconds.</p>
+          <p>Single & double elimination, round-robin, group stages. Configure any structure in seconds.</p>
         </div>
         <div class="value-card">
           <div class="value-icon">🔒</div>
           <h3>Role-Based Security</h3>
-          <p>Institution, County, National, and Global admin roles. Each level controls its scope. No bottlenecks, no compromises.</p>
+          <p>Institution, County, National, and Global admin roles. Each level controls its scope.</p>
         </div>
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- FEATURES SPOTLIGHT                                     -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section id="features" class="features-spotlight">
       <div class="section-header">
-        <div class="section-kicker">Capabilities</div>
-        <h2 class="section-title">Built for Every Role</h2>
+        <div>
+          <div class="section-kicker">Capabilities</div>
+          <h2 class="section-title">Built for Every Role</h2>
+        </div>
       </div>
-
       <div class="features-showcase">
         <div class="feature-item player-feature">
           <div class="feature-icon">⚡</div>
@@ -216,14 +247,12 @@
           <p>See your bracket in real time. Track your ELO rating. Earn badges. Compete on global leaderboards.</p>
           <a href="features.html" class="feature-link">Explore Player Tools →</a>
         </div>
-
         <div class="feature-item organizer-feature">
           <div class="feature-icon">📋</div>
           <h3>Organizers</h3>
           <p>Register participants, generate brackets, manage payments, track results. Everything in one dashboard.</p>
           <a href="features.html" class="feature-link">Explore Organizer Tools →</a>
         </div>
-
         <div class="feature-item federation-feature">
           <div class="feature-icon">🌍</div>
           <h3>Federations</h3>
@@ -233,92 +262,76 @@
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- HOW IT WORKS — Process Flow                            -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section class="how-it-works">
       <div class="section-header">
-        <div class="section-kicker">Process</div>
-        <h2 class="section-title">Three Steps to Competition</h2>
+        <div>
+          <div class="section-kicker">Process</div>
+          <h2 class="section-title">Three Steps to Competition</h2>
+        </div>
       </div>
-
       <div class="process-steps">
         <div class="process-step">
           <div class="step-number">01</div>
           <div class="step-line"></div>
           <div class="step-content">
             <h3>Register</h3>
-            <p>Pick your category, pay entry, and you're on the live roster instantly. See your competitor count climb in real time.</p>
+            <p>Pick your category, pay entry, and you're on the live roster instantly.</p>
           </div>
         </div>
-
         <div class="process-step">
           <div class="step-number">02</div>
           <div class="step-line"></div>
           <div class="step-content">
             <h3>Compete</h3>
-            <p>Matches, scores, and standings update live. Watch your ELO rise. See who's watching from the leaderboard.</p>
+            <p>Matches, scores, and standings update live. Watch your ELO rise.</p>
           </div>
         </div>
-
         <div class="process-step">
           <div class="step-number">03</div>
           <div class="step-line"></div>
           <div class="step-content">
             <h3>Progress</h3>
-            <p>Your results feed your Sport Passport. Rating carries forward. Badges unlock. Your standing builds across seasons.</p>
+            <p>Your results feed your Sport Passport. Rating carries forward. Badges unlock.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- GALLERY TEASER                                         -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section id="gallery" class="gallery-teaser">
       <div class="section-header">
-        <div class="section-kicker">Moments</div>
-        <h2 class="section-title">From the Courts</h2>
+        <div>
+          <div class="section-kicker">Moments</div>
+          <h2 class="section-title">From the Courts</h2>
+        </div>
         <a href="gallery.html" class="view-all">View Full Gallery →</a>
       </div>
-
       <div class="gallery-grid">
         <a href="gallery.html" class="gallery-item gallery-large">
           <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=1200&auto=format&fit=crop" alt="Tournament Moment">
-          <div class="gallery-overlay">
-            <span>Banana Smash S04</span>
-          </div>
+          <div class="gallery-overlay"><span>Banana Smash S04</span></div>
         </a>
         <a href="gallery.html" class="gallery-item">
           <img src="https://images.unsplash.com/photo-1560089168-6516081ba64f?q=80&w=1200&auto=format&fit=crop" alt="Players">
-          <div class="gallery-overlay">
-            <span>The Competition</span>
-          </div>
+          <div class="gallery-overlay"><span>The Competition</span></div>
         </a>
         <a href="gallery.html" class="gallery-item">
           <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop" alt="Crowd">
-          <div class="gallery-overlay">
-            <span>Community</span>
-          </div>
+          <div class="gallery-overlay"><span>Community</span></div>
         </a>
         <a href="gallery.html" class="gallery-item">
           <img src="https://images.unsplash.com/photo-1552168324-d612d080e601?q=80&w=1200&auto=format&fit=crop" alt="Junior Division">
-          <div class="gallery-overlay">
-            <span>Next Generation</span>
-          </div>
+          <div class="gallery-overlay"><span>Next Generation</span></div>
         </a>
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- CALENDAR TEASER                                        -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section id="calendar" class="calendar-teaser">
       <div class="section-header">
-        <div class="section-kicker">What's Next</div>
-        <h2 class="section-title">Event Calendar</h2>
+        <div>
+          <div class="section-kicker">What's Next</div>
+          <h2 class="section-title">Event Calendar</h2>
+        </div>
       </div>
-
       <div class="calendar-preview">
         <div class="event-card">
           <div class="event-status">LIVE</div>
@@ -327,7 +340,6 @@
           <div class="event-date">Aug 22–23, 2026</div>
           <a href="kiambu/s04/" class="event-cta">Register Now →</a>
         </div>
-
         <div class="event-card coming-soon">
           <div class="event-status">UPCOMING</div>
           <div class="event-title">Multi-Sport Festival</div>
@@ -335,7 +347,6 @@
           <div class="event-date">September 2026</div>
           <div class="event-cta disabled">Coming Soon</div>
         </div>
-
         <div class="event-card coming-soon">
           <div class="event-status">UPCOMING</div>
           <div class="event-title">National Championships</div>
@@ -344,15 +355,11 @@
           <div class="event-cta disabled">Coming Soon</div>
         </div>
       </div>
-
       <div class="calendar-link">
         <a href="calendar.html" class="btn btn-ghost">View Full Calendar →</a>
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────── -->
-    <!-- CTA FINAL — Convert                                    -->
-    <!-- ─────────────────────────────────────────────────────── -->
     <section class="final-cta">
       <div class="cta-content">
         <h2>Ready to Transform Tournament Management?</h2>
@@ -371,13 +378,54 @@
     Global Tournament Management Platform · Kiambu County · Phase 01 · Live Now
   </footer>
 
-  <!-- Live counter update script -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://xtbvzdupauxuxchhmshd.supabase.co";
+    /* ── CAROUSEL ─────────────────────────────────────────── */
+    (function () {
+      const track  = document.getElementById('carouselTrack');
+      const slides = track.querySelectorAll('.carousel-slide');
+      const dotsEl = document.getElementById('carouselDots');
+      let current  = 0;
+      let timer;
+
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'carousel-dot' + (i === 0 ? ' is-active' : '');
+        d.setAttribute('aria-label', 'Slide ' + (i + 1));
+        d.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(d);
+      });
+
+      function goTo(n) {
+        slides[current].classList.remove('is-active');
+        dotsEl.children[current].classList.remove('is-active');
+        current = (n + slides.length) % slides.length;
+        slides[current].classList.add('is-active');
+        dotsEl.children[current].classList.add('is-active');
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        resetTimer();
+      }
+
+      function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1), 5000);
+      }
+
+      document.getElementById('carouselPrev').addEventListener('click', () => goTo(current - 1));
+      document.getElementById('carouselNext').addEventListener('click', () => goTo(current + 1));
+
+      const carousel = document.getElementById('topCarousel');
+      carousel.addEventListener('mouseenter', () => clearInterval(timer));
+      carousel.addEventListener('mouseleave', resetTimer);
+
+      resetTimer();
+    })();
+
+    /* ── SUPABASE COUNTERS ────────────────────────────────── */
+    const SUPABASE_URL      = "https://xtbvzdupauxuxchhmshd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo";
-    const TOURNAMENT_ID = "0412efac-41e8-4071-9a55-c4029bb70e7d";
-    
+    const TOURNAMENT_ID     = "0412efac-41e8-4071-9a55-c4029bb70e7d";
+
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function updateCounters() {
@@ -385,19 +433,18 @@
         .from('category_entries')
         .select('id, payment_status')
         .eq('tournament_id', TOURNAMENT_ID);
-
       if (error) return;
-
-      const total = data?.length || 0;
+      const total     = data?.length || 0;
       const confirmed = data?.filter(r => r.payment_status === 'confirmed').length || 0;
-
-      document.getElementById('total-live').textContent = total;
+      document.getElementById('total-live').textContent     = total;
       document.getElementById('confirmed-live').textContent = confirmed;
     }
 
     updateCounters();
-    sb.from('category_entries').on('*', updateCounters).subscribe();
+    sb.channel('home-entries')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, updateCounters)
+      .subscribe();
   </script>
 
 </body>
-</html> 
+</html>

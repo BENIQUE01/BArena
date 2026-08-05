@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendar — BArena</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+  <link rel="stylesheet" href="assets/css/calendar.css"/>
+
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="tournaments.html">Tournaments</a></li>
+    <li><a href="calendar.html" class="active">Calendar</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <h1>Event <span>Calendar</span></h1>
+  <p>All BArena events across counties and editions, grouped by month.</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="upcoming">Upcoming & Live</button>
+  <button class="tab-btn" data-tab="past">Past Events</button>
+</div>
+
+<div class="timeline" id="timeline">
+  <div class="skeleton-row"></div>
+  <div class="skeleton-row"></div>
+  <div class="skeleton-row"></div>
+</div>
+
+<script>
+  const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let allEvents = [];
+  let activeTab = 'upcoming';
+
+  async function loadEvents() {
+    const { data: events, error } = await db
+      .from('events')
+      .select('*')
+      .order('start_date', { ascending: false });
+
+    if (error) { renderError(); return; }
+
+    const { data: regCounts } = await db
+      .from('registrations')
+      .select('event_id');
+
+    const countMap = {};
+    if (regCounts) regCounts.forEach(r => { countMap[r.event_id] = (countMap[r.event_id] || 0) + 1; });
+
+    allEvents = (events || []).map(e => ({
+      ...e,
+      total_registrations: countMap[e.id] || 0
+    }));
+
+    render();
+  }
+
+  function render() {
+    const tl = document.getElementById('timeline');
+    const isUpcoming = activeTab === 'upcoming';
+
+    const filtered = allEvents.filter(e =>
+      isUpcoming ? (e.status === 'live' || e.status === 'upcoming') : e.status === 'past'
+    );
+
+    if (filtered.length === 0) {
+      tl.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📅</div>
+          <h3>No ${isUpcoming ? 'upcoming' : 'past'} events</h3>
+          <p>${isUpcoming ? 'Check back soon — new tournaments are added regularly.' : 'Past events will appear here once they conclude.'}</p>
+        </div>`;
+      return;
+    }
+
+    // Group by month
+    const groups = {};
+    filtered.forEach(e => {
+      const d = new Date(e.start_date || Date.now());
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const label = d.toLocaleDateString('en-KE', { month: 'long', year: 'numeric' });
+      if (!groups[key]) groups[key] = { label, events: [] };
+      groups[key].events.push(e);
+    });
+
+    const sortedKeys = Object.keys(groups).sort((a, b) => isUpcoming ? a.localeCompare(b) : b.localeCompare(a));
+
+    tl.innerHTML = sortedKeys.map(key => {
+      const { label, events } = groups[key];
+      return `
+        <div class="month-group">
+          <div class="month-header">
+            <span class="month-label">${label}</span>
+            <div class="month-line"></div>
+          </div>
+          ${events.map(e => rowHTML(e)).join('')}
+        </div>`;
+    }).join('');
+  }
+
+  function rowHTML(e) {
+    const d = new Date(e.start_date || Date.now());
+    const day = d.getDate();
+    const mon = d.toLocaleDateString('en-KE', { month: 'short' });
+    const statusClass = `pill-${e.status}`;
+    const statusLabel = e.status === 'live' ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
+    const href = e.registration_url || 'kiambu/s04/index.html';
+
+    return `
+    <a class="event-row" href="${href}">
+      <div class="event-date">
+        <div class="day">${day}</div>
+        <div class="mon">${mon}</div>
+      </div>
+      <div class="event-info">
+        <h3>${e.name || 'Tournament'}</h3>
+        <div class="event-meta">
+          ${e.venue ? `<span>📍 ${e.venue}${e.county ? ', ' + e.county : ''}</span>` : ''}
+          ${e.sport ? `<span>🏆 ${e.sport}</span>` : ''}
+          ${e.edition ? `<span>📌 ${e.edition}${e.season_number ? ' S' + e.season_number : ''}</span>` : ''}
+        </div>
+      </div>
+      <div class="event-right">
+        <span class="status-pill ${statusClass}">
+          <div class="pill-dot"></div>${statusLabel}
+        </span>
+        <span class="reg-count"><strong>${e.total_registrations}</strong> registered</span>
+      </div>
+    </a>`;
+  }
+
+  function renderError() {
+    document.getElementById('timeline').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <h3>Couldn't load events</h3>
+        <p>Check your Supabase credentials.</p>
+      </div>`;
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = btn.dataset.tab;
+      render();
+    });
+  });
+
+  loadEvents();
+</script>
+</body>
+</html>

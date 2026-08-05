@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — BArena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+  <link rel="stylesheet" href="assets/css/about.css"/>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="tournaments.html">Tournaments</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="about-hero">
+  <span class="eyebrow">Global Platform</span>
+  <h1>Sport, <span>structured</span> for everyone</h1>
+  <p>BArena is a tournament management platform built to organize competitive sport at every level — from school halls to continental arenas — on a single shared infrastructure.</p>
+</div>
+
+<div class="content-section">
+
+  <!-- MISSION CARDS -->
+  <div class="mission-grid">
+    <div class="mission-card">
+      <div class="icon">🏆</div>
+      <h3>250+ sports supported</h3>
+      <p>One platform for every sport — from Banana Smash to basketball, badminton to athletics.</p>
+    </div>
+    <div class="mission-card">
+      <div class="icon">📊</div>
+      <h3>ELO-rated & tracked</h3>
+      <p>Every match updates player ratings. Athletes build a portable sport identity across tournaments.</p>
+    </div>
+    <div class="mission-card">
+      <div class="icon">🌍</div>
+      <h3>County to continental</h3>
+      <p>Designed to scale from a Kiambu pilot to a global federation — the same system, the same data.</p>
+    </div>
+    <div class="mission-card">
+      <div class="icon">⚡</div>
+      <h3>Live, not static</h3>
+      <p>Real-time registration counters, live brackets, and instant results — not a brochure, a platform.</p>
+    </div>
+  </div>
+
+  <!-- HIERARCHY -->
+  <div class="hierarchy-section">
+    <h2>Six-level competition hierarchy</h2>
+    <div class="hierarchy-steps">
+      <div class="h-step">
+        <span class="level-num">L1</span>
+        <span class="level-name">Institution</span>
+        <span class="level-desc">School, club, or university</span>
+      </div>
+      <div class="h-step">
+        <span class="level-num">L2</span>
+        <span class="level-name">Zone</span>
+        <span class="level-desc">Local area or ward</span>
+      </div>
+      <div class="h-step">
+        <span class="level-num">L3</span>
+        <span class="level-name">County</span>
+        <span class="level-desc">e.g. Kiambu — current pilot</span>
+      </div>
+      <div class="h-step">
+        <span class="level-num">L4</span>
+        <span class="level-name">National</span>
+        <span class="level-desc">Country-wide championships</span>
+      </div>
+      <div class="h-step">
+        <span class="level-num">L5</span>
+        <span class="level-name">Continental</span>
+        <span class="level-desc">Pan-African & regional</span>
+      </div>
+      <div class="h-step">
+        <span class="level-num">L6</span>
+        <span class="level-name">Global</span>
+        <span class="level-desc">World-level competition</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider"/>
+
+  <!-- PARTNERS -->
+  <div class="partners-section">
+    <h2>Partners & acknowledgements</h2>
+    <p>BArena's Kiambu pilot was made possible with support from the following organisations and individuals.</p>
+    <div class="partner-list">
+      <div class="partner-chip">
+        <span>Kiambu County Sports</span>
+        <span class="badge">County</span>
+      </div>
+      <div class="partner-chip">
+        <span>Banana Smash Kenya</span>
+        <span class="badge">Federation</span>
+      </div>
+      <div class="partner-chip">
+        <span>BArena App Team</span>
+        <span class="badge">Tech</span>
+      </div>
+      <!-- Add more partners here -->
+    </div>
+  </div>
+
+  <hr class="section-divider"/>
+
+  <!-- CONTACT FORM -->
+  <div class="contact-section">
+    <h2>Get in touch</h2>
+    <p>For general enquiries, sponsorship interest, or to bring BArena to your county or federation.</p>
+
+    <div id="contact-form-wrap">
+      <div class="form-row">
+        <div class="field-group">
+          <label for="cf-name">Full Name</label>
+          <input type="text" id="cf-name" placeholder="Your name"/>
+        </div>
+        <div class="field-group">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" placeholder="you@example.com"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group">
+          <label for="cf-org">Organisation (optional)</label>
+          <input type="text" id="cf-org" placeholder="County, club, federation…"/>
+        </div>
+        <div class="field-group">
+          <label for="cf-type">Enquiry type</label>
+          <select id="cf-type">
+            <option value="">Select…</option>
+            <option>General enquiry</option>
+            <option>Sponsorship</option>
+            <option>Host a tournament</option>
+            <option>Media / press</option>
+            <option>Technical support</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="field-group">
+          <label for="cf-msg">Message</label>
+          <textarea id="cf-msg" rows="5" placeholder="Tell us about your interest or question…"></textarea>
+        </div>
+      </div>
+      <button class="submit-btn" id="cf-submit">Send Message →</button>
+    </div>
+
+    <div class="form-success" id="form-success">
+      <div class="icon">✅</div>
+      <h3>Message received</h3>
+      <p>We'll be in touch within 2 business days.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider"/>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2>Frequently asked questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        How do I register for a tournament?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Visit the Tournaments page, find the event you want to enter, and click Register. You'll select your category, fill in your details, and receive payment instructions. Your slot is secured once payment is confirmed.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        What sports does BArena support?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">BArena is designed to handle 250+ sports. The current pilot focuses on Banana Smash in Kiambu County, but the platform can onboard any sport that uses brackets, round-robins, or league formats.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        How do I confirm my payment?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">After registering, send your M-Pesa payment code to the number provided. An admin will verify and flip your status to Confirmed — you'll see a green ✓ next to your name on the tournament page.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        Can I bring BArena to my county?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes — use the contact form above and select "Host a tournament." We'll walk you through setting up your county edition on the same platform, with the same real-time features as the Kiambu pilot.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        Is BArena free for players?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">The BArena app and website are free to use. Tournaments may charge an entry fee set by the organiser — this is always displayed on the tournament page before you register.</div>
+    </div>
+  </div>
+
+</div><!-- /content-section -->
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      item.classList.toggle('open');
+    });
+  });
+
+  // Contact form — writes to Supabase enquiries table (optional)
+  // Or just shows success state for now
+  document.getElementById('cf-submit').addEventListener('click', async () => {
+    const name  = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const msg   = document.getElementById('cf-msg').value.trim();
+    const type  = document.getElementById('cf-type').value;
+
+    if (!name || !email || !msg) {
+      alert('Please fill in your name, email, and message.');
+      return;
+    }
+
+    const btn = document.getElementById('cf-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    // Optional: write to Supabase enquiries table
+    // const { createClient } = supabase;
+    // const db = createClient('YOUR_URL', 'YOUR_KEY');
+    // await db.from('enquiries').insert({ name, email, type, message: msg });
+
+    // Simulate send
+    await new Promise(r => setTimeout(r, 800));
+
+    document.getElementById('contact-form-wrap').style.display = 'none';
+    document.getElementById('form-success').classList.add('show');
+  });
+</script>
+</body>
+</html>

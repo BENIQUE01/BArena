@@ -1,0 +1,95 @@
+/* ─── calendar.css ────────────────────────────────────────── */
+/* Requires: base.css, shared.css */
+
+.tab-bar {
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.timeline {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+.month-group { margin-bottom: 2.5rem; }
+
+.month-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.month-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.month-line { flex: 1; height: 1px; background: var(--border); }
+
+.event-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.625rem;
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.event-row:hover {
+  border-color: rgba(124,58,237,0.4);
+  transform: translateX(4px);
+}
+
+.event-date {
+  text-align: center;
+  border-right: 1px solid var(--border);
+  padding-right: 1rem;
+}
+.event-date .day {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.event-date .mon {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+.event-info h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+.event-meta { display: flex; gap: 1rem; flex-wrap: wrap; }
+.event-meta span { font-size: 0.775rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; }
+
+.event-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+
+.reg-count { font-family: var(--font-display); font-size: 0.85rem; color: var(--muted); }
+.reg-count strong { color: var(--text); }
+
+.skeleton-row { height: 72px; margin-bottom: 0.625rem; border-radius: 12px; }
+
+@media (max-width: 600px) {
+  .event-row { grid-template-columns: 48px 1fr; }
+  .event-right { display: none; }
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery — BArena</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+ <link rel="stylesheet" href="assets/css/gallery.css"/>
+</head>
+<body>
+
+nav>
+  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="tournaments.html">Tournaments</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <h1>Photo <span>Gallery</span></h1>
+  <p>A visual archive of every BArena event — by county, edition, and season.</p>
+</div>
+
+<div class="event-filter" id="event-filter">
+  <button class="event-pill active" data-event-id="all">All Events</button>
+</div>
+
+<div class="gallery-section" id="gallery-section">
+  <div class="skeleton-masonry">
+    <div class="skeleton-photo" style="height:180px"></div>
+    <div class="skeleton-photo" style="height:240px"></div>
+    <div class="skeleton-photo" style="height:160px"></div>
+    <div class="skeleton-photo" style="height:200px"></div>
+    <div class="skeleton-photo" style="height:220px"></div>
+    <div class="skeleton-photo" style="height:190px"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lb-close">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+  <img id="lb-img" src="" alt=""/>
+  <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+  <div class="lightbox-caption" id="lb-caption"></div>
+</div>
+
+<script>
+  const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let allPhotos = [];
+  let allEvents = {};
+  let activeEventId = 'all';
+  let lightboxPhotos = [];
+  let lightboxIndex = 0;
+
+  async function loadGallery() {
+    const [{ data: photos, error: pe }, { data: events }] = await Promise.all([
+      db.from('event_photos').select('*').order('created_at', { ascending: false }),
+      db.from('events').select('id, name, edition, season_number, county')
+    ]);
+
+    if (pe) { renderError(); return; }
+
+    // Build event map
+    (events || []).forEach(e => { allEvents[e.id] = e; });
+
+    allPhotos = photos || [];
+
+    buildEventFilter();
+    render();
+  }
+
+  function buildEventFilter() {
+    const container = document.getElementById('event-filter');
+    const eventIds = [...new Set(allPhotos.map(p => p.event_id).filter(Boolean))];
+
+    eventIds.forEach(id => {
+      const e = allEvents[id];
+      const label = e ? (e.name || e.edition || 'Event') : 'Event';
+      const btn = document.createElement('button');
+      btn.className = 'event-pill';
+      btn.dataset.eventId = id;
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.event-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeEventId = id;
+        render();
+      });
+      container.appendChild(btn);
+    });
+
+    document.querySelector('[data-event-id="all"]').addEventListener('click', () => {
+      document.querySelectorAll('.event-pill').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-event-id="all"]').classList.add('active');
+      activeEventId = 'all';
+      render();
+    });
+  }
+
+  function render() {
+    const section = document.getElementById('gallery-section');
+    const filtered = activeEventId === 'all'
+      ? allPhotos
+      : allPhotos.filter(p => p.event_id == activeEventId);
+
+    if (filtered.length === 0) {
+      section.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📸</div>
+          <h3>No photos yet</h3>
+          <p>Photos from events will appear here as they are uploaded.</p>
+        </div>`;
+      return;
+    }
+
+    // Group by event
+    const groups = {};
+    filtered.forEach(p => {
+      const key = p.event_id || '__none__';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    });
+
+    lightboxPhotos = filtered;
+
+    section.innerHTML = Object.entries(groups).map(([eventId, photos]) => {
+      const e = allEvents[eventId];
+      const eventLabel = e
+        ? `${e.name || e.edition || 'Event'}${e.season_number ? ' — Season ' + e.season_number : ''}${e.county ? ' · ' + e.county : ''}`
+        : 'Photos';
+
+      return `
+        <div class="gallery-event-section">
+          <div class="gallery-event-label">
+            <h2>${eventLabel}</h2>
+            <div class="divider"></div>
+            <span class="count">${photos.length} photo${photos.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="masonry">
+            ${photos.map((p, i) => {
+              const globalIndex = lightboxPhotos.indexOf(p);
+              return `
+                <div class="photo-item" data-index="${globalIndex}">
+                  <img src="${p.image_url}" alt="${p.caption || 'BArena event photo'}" loading="lazy"/>
+                  <div class="photo-overlay">
+                    <span class="photo-caption">${p.caption || ''}</span>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+    }).join('');
+
+    // Attach click handlers
+    section.querySelectorAll('.photo-item').forEach(item => {
+      item.addEventListener('click', () => openLightbox(+item.dataset.index));
+    });
+  }
+
+  function renderError() {
+    document.getElementById('gallery-section').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <h3>Couldn't load gallery</h3>
+        <p>Check your Supabase credentials.</p>
+      </div>`;
+  }
+
+  // ─── LIGHTBOX ─────────────────────────────────────────────
+  function openLightbox(index) {
+    lightboxIndex = index;
+    showLightboxPhoto();
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showLightboxPhoto() {
+    const p = lightboxPhotos[lightboxIndex];
+    if (!p) return;
+    document.getElementById('lb-img').src = p.image_url;
+    document.getElementById('lb-caption').textContent = p.caption || '';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => {
+    lightboxIndex = (lightboxIndex - 1 + lightboxPhotos.length) % lightboxPhotos.length;
+    showLightboxPhoto();
+  });
+  document.getElementById('lb-next').addEventListener('click', () => {
+    lightboxIndex = (lightboxIndex + 1) % lightboxPhotos.length;
+    showLightboxPhoto();
+  });
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) closeLightbox();
+  });
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') document.getElementById('lb-prev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
+  });
+
+  loadGallery();
+</script>
+</body>
+</html>

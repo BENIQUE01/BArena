@@ -116,17 +116,25 @@
      const identifier = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
 
-      // Try email first, fall back to username
-      let { data, error } = await sb.auth.signInWithPassword({ email: identifier, password });
-      if (error && !identifier.includes('@')) {
-        // If failed and it's not an email, try as username
-        const { data: userData, error: userError } = await sb.auth.signInWithPassword({ 
-          email: identifier, 
-          password 
-        });
-        data = userData;
-        error = userError;
+     // Resolve username → email via profiles table
+      let emailToUse = identifier;
+      if (!identifier.includes('@')) {
+        const { data: profile, error: profileError } = await sb
+          .from('profiles')
+          .select('email')
+          .eq('username', identifier)
+          .maybeSingle();
+        if (profileError || !profile) {
+          loginMsg.textContent = "Username not found.";
+          loginMsg.classList.add('err');
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Sign In";
+          return;
+        }
+        emailToUse = profile.email;
       }
+
+      let { data, error } = await sb.auth.signInWithPassword({ email: emailToUse, password });
 
       if (error){
         loginMsg.textContent = "Login failed — check your email and password.";
