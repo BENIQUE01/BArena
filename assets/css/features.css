@@ -1,0 +1,349 @@
+/* ================= FEATURES PAGE ================= */
+
+.features-hero {
+  background: linear-gradient(135deg, rgba(232, 57, 14, 0.1) 0%, rgba(41, 182, 246, 0.05) 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 80px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.features-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(232, 57, 14, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.features-hero .hero-text {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+
+.features-hero h1 {
+  font-family: var(--font-display);
+  font-size: 48px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  background: linear-gradient(90deg, var(--text) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.features-hero p {
+  font-size: 16px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ================= FEATURES GRID ================= */
+
+.features-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.features-section-alt {
+  background: linear-gradient(180deg, rgba(41, 182, 246, 0.03) 0%, transparent 100%);
+}
+
+.section-head {
+  margin-bottom: 60px;
+}
+
+.section-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.section-desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 500px;
+}
+
+/* Feature Cards — Glassmorphism Style */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.features-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.feature-card {
+  padding: 32px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.feature-card.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 57, 14, 0.3), transparent);
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(232, 57, 14, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card.accent {
+  background: linear-gradient(135deg, rgba(232, 57, 14, 0.08) 0%, rgba(41, 182, 246, 0.03) 100%);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.feature-card.accent:hover {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(232, 57, 14, 0.12) 0%, rgba(41, 182, 246, 0.06) 100%);
+  box-shadow: 0 16px 40px rgba(232, 57, 14, 0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.icon-large {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.feature-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(232, 57, 14, 0.1);
+  color: var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ================= BENEFITS GRID ================= */
+
+.benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+}
+
+.benefit-item {
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(232, 57, 14, 0.3);
+  transform: translateY(-4px);
+}
+
+.benefit-item .num {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.benefit-item h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.benefit-item p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ================= TWO COLUMN LAYOUT ================= */
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.two-col > div {
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(41, 182, 246, 0.05) 0%, rgba(232, 57, 14, 0.03) 100%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.two-col h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.two-col p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.feature-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .features-hero h1 {
+    font-size: 36px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benefit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= CTA SECTION ================= */
+
+.features-cta {
+  padding: 80px 0;
+}
+
+.cta-box {
+  background: linear-gradient(135deg, rgba(232, 57, 14, 0.15) 0%, rgba(41, 182, 246, 0.08) 100%);
+  border: 1px solid rgba(232, 57, 14, 0.2);
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.cta-box h2 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.cta-box p {
+  font-size: 16px;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-buttons .btn {
+  min-width: 200px;
+}
+
+/* Smooth animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-card, .benefit-item, .features-cta {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.feature-card:nth-child(2) { animation-delay: 0.1s; }
+.feature-card:nth-child(3) { animation-delay: 0.2s; }
+.feature-card:nth-child(4) { animation-delay: 0.3s; }
+.feature-card:nth-child(5) { animation-delay: 0.4s; }
+.feature-card:nth-child(6) { animation-delay: 0.5s; }
