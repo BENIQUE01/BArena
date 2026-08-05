@@ -120,7 +120,9 @@
 
     /* SEASON CARD */
     .season-card {
-      background: var(--surface);
+      background: rgba(13,17,23,0.45);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 24px;
@@ -178,9 +180,9 @@
 
     .sc-name {
       font-family: var(--font-display);
-      font-size: 22px;
+      font-size: 26px;
       text-transform: uppercase;
-      letter-spacing: .04em;
+      letter-spacing: .05em;
       color: var(--text);
       margin-bottom: 6px;
     }
@@ -233,7 +235,9 @@
     }
     @media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
     .about-card {
-      background: var(--surface);
+      background: rgba(13,17,23,0.45);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 24px;
@@ -265,7 +269,9 @@
       gap: 12px;
     }
     .club-chip {
-      background: var(--surface);
+      background: rgba(13,17,23,0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 16px;

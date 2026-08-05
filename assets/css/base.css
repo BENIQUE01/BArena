@@ -40,7 +40,38 @@
   a{color:inherit;}
   img{display:block; max-width:100%;}
 
-  /* ---- nav (every page) ---- */
+  /* ---- page background image (glass pages) ---- */
+body.tournaments-page::before,
+body.calendar-page::before,
+body.about-page::before,
+body.features-page::before,
+body.gallery-page::before,
+body.kitta-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(13,17,23,0.72) 0%,
+      rgba(13,17,23,0.85) 50%,
+      rgba(13,17,23,0.96) 100%
+    ),
+    url('../images/hero.jpg') center center / cover no-repeat;
+  pointer-events: none;
+}
+
+body.tournaments-page > *,
+body.calendar-page > *,
+body.about-page > *,
+body.features-page > *,
+body.gallery-page > *,
+body.kitta-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- nav (every page) ---- */
   nav{
     display:flex; align-items:center; justify-content:space-between;
     padding:18px 28px; border-bottom:1px solid var(--line);

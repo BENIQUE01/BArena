@@ -46,7 +46,9 @@
   margin: 2.5rem 0;
 }
 .mission-card {
-  background: var(--card);
+  background: rgba(13,17,23,0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.5rem;
@@ -70,7 +72,9 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1.25rem;
-  background: var(--card);
+  background: rgba(13,17,23,0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--border);
 }
 .h-step:first-child { border-radius: 12px 12px 0 0; }
@@ -89,7 +93,7 @@
   min-width: 24px;
   text-align: center;
 }
-.h-step .level-name { font-weight: 600; font-size: 0.9rem; }
+.h-step .level-name { font-weight: 600; font-size: 1rem; letter-spacing: 0.01em; }
 .h-step .level-desc { color: var(--muted); font-size: 0.8rem; margin-left: auto; }
 
 /* PARTNERS */
@@ -97,7 +101,9 @@
 .partners-section > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
 .partner-list { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .partner-chip {
-  background: var(--card);
+  background: rgba(13,17,23,0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.6rem 1rem;
