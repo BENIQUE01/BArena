@@ -87,6 +87,7 @@
   color: inherit;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 .t-card:hover {
   transform: translateY(-3px);

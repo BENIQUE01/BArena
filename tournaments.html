@@ -186,7 +186,7 @@
                   : '#';
 
     return `
-    <a class="t-card" href="${ctaHref}">
+    <div class="t-card" onclick="window.location.href='${ctaHref}'">
       <div class="card-top">
         <span class="sport-badge">${e.sport || 'Sport'}</span>
         <span class="status-badge ${statusClass}">
@@ -216,7 +216,7 @@
           ${ctaLabel} →
         </a>
       </div>
-    </a>`;
+    </div>`;
   }
 
   function renderError() {
