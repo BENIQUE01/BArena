@@ -1,0 +1,193 @@
+/* ============================================================
+   THEME CONFIG — edit everything below to change the look.
+   Nothing else in this file needs to change to reskin the site.
+   ============================================================ */
+:root{
+  /* --- Colors --- */
+  --bg:            #0d1117;   /* main background */
+  --bg-panel:      #161b22;   /* card / panel background */
+  --accent:        #ff6a3d;   /* primary accent — CTAs, live indicators */
+  --accent-dim:    #cc4f28;
+  --accent2:       #29b6f6;   /* secondary accent — data, links, scoreboard glow */
+  --gold:          #f2c14e;   /* prizes / highlights */
+  --text:          #f5f7fa;   /* main text */
+  --text-dim:      rgba(245,247,250,0.62);
+  --line:          rgba(245,247,250,0.12);
+
+  /* --- Fonts --- */
+  --font-display:  'Bebas Neue', sans-serif;   /* headlines */
+  --font-body:     'Inter', sans-serif;        /* body copy */
+  --font-mono:     'Space Mono', monospace;    /* scoreboard / stats */
+
+  /* --- Hero background media --- */
+  /* This is currently a placeholder stock photo. To use your own:
+     1. Add your photo to an "images" folder next to this CSS file
+        (e.g. images/hero.jpg)
+     2. Replace the URL below with: url('images/hero.jpg')
+     Or swap the whole header.hero rule below to use a <video>
+     instead (see notes in the HTML comment above the hero section). */
+  --hero-image: url('https://images.unsplash.com/photo-1531315630201-bb15abeb1653?q=80&w=1974&auto=format&fit=crop');
+}
+/* ============================================================
+   END THEME CONFIG
+   ============================================================ */
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body); line-height:1.55;}
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+a{color:inherit;}
+img{display:block; max-width:100%;}
+
+/* ---- nav ---- */
+nav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 28px; border-bottom:1px solid var(--line);
+  position:sticky; top:0; background:rgba(13,17,23,0.85); backdrop-filter:blur(10px); z-index:30;
+}
+.brand{font-family:var(--font-display); font-size:26px; letter-spacing:.03em;}
+.brand span{color:var(--accent);}
+.navlinks{display:flex; gap:28px; font-size:13.5px; font-weight:600;}
+.navlinks a{text-decoration:none; color:var(--text-dim); transition:color .15s;}
+.navlinks a:hover{color:var(--text);}
+.nav-cta{background:var(--accent); color:#0d0d0d; font-weight:700; font-size:13px; padding:10px 20px; border-radius:6px; text-decoration:none;}
+@media(max-width:760px){ .navlinks{display:none;} }
+
+/* ================= HERO (background image/video) ================= */
+/*
+  TO USE A VIDEO INSTEAD OF A PHOTO:
+  1. Delete the --hero-image line's usage below (the background-image rule).
+  2. Uncomment the <video> block in the HTML just below <header class="hero">.
+  3. Set its <source src="your-video.mp4">.
+*/
+header.hero{
+  position:relative;
+  min-height:88vh;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  background-image:
+    linear-gradient(180deg, rgba(13,17,23,0.55) 0%, rgba(13,17,23,0.75) 55%, var(--bg) 100%),
+    var(--hero-image);
+  background-size:cover;
+  background-position:center;
+  overflow:hidden;
+}
+header.hero video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+}
+.hero-inner{position:relative; z-index:2; padding:40px 24px;}
+.eyebrow{
+  display:inline-block; font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gold); border:1px solid rgba(242,193,78,0.4); padding:7px 16px; border-radius:999px; margin-bottom:26px;
+}
+.title{font-family:var(--font-display); text-transform:uppercase; line-height:0.92; letter-spacing:.01em;}
+.title .l1{font-size:clamp(58px,13vw,120px); color:var(--text); display:block;}
+.title .l2{
+  font-size:clamp(18px,3.2vw,24px); font-family:var(--font-body); font-weight:700; text-transform:none;
+  letter-spacing:.02em; color:var(--text-dim); display:block; margin-top:14px;
+}
+.hero-inner p.lead{margin:22px auto 0; max-width:540px; color:var(--text-dim); font-size:16px;}
+.hero-ctas{display:flex; gap:14px; justify-content:center; margin-top:34px; flex-wrap:wrap;}
+.btn{display:inline-block; font-weight:700; font-size:14.5px; padding:15px 32px; border-radius:6px; text-decoration:none; transition:transform .15s ease;}
+.btn:hover{transform:translateY(-2px);}
+.btn-primary{background:var(--accent); color:#0d0d0d;}
+.btn-ghost{border:1px solid rgba(245,247,250,0.35); color:var(--text);}
+
+/* ================= LED SCOREBOARD STAT STRIP ================= */
+.scoreboard{
+  background:var(--bg-panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:34px 0;
+}
+.scoreboard .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; text-align:center;}
+@media(max-width:700px){ .scoreboard .grid{grid-template-columns:1fr 1fr;} }
+.stat .num{
+  font-family:var(--font-mono); font-weight:700; font-size:clamp(30px,5vw,42px);
+  color:var(--accent2); text-shadow:0 0 18px rgba(41,182,246,0.45); letter-spacing:.02em;
+}
+.stat .lab{font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); margin-top:6px;}
+
+/* ================= SECTIONS ================= */
+section{padding:64px 0;}
+.section-head{margin-bottom:30px; max-width:600px;}
+.section-kicker{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:10px;}
+.section-title{font-family:var(--font-display); text-transform:uppercase; font-size:38px; letter-spacing:.01em; line-height:1;}
+.section-desc{color:var(--text-dim); font-size:15px; margin-top:12px;}
+
+/* ---- Kiambu spotlight ---- */
+.spotlight{
+  border:1px solid rgba(255,106,61,0.35);
+  background:linear-gradient(135deg, rgba(255,106,61,0.08), transparent);
+  border-radius:14px; padding:32px; display:flex; gap:26px; align-items:center; flex-wrap:wrap;
+}
+.live-tag{display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;}
+.live-dot{width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.spotlight h3{font-family:var(--font-display); font-size:32px; text-transform:uppercase; margin-bottom:8px; letter-spacing:.01em;}
+.spotlight p{font-size:14px; color:var(--text-dim); max-width:380px;}
+.spotlight .stat-box{margin-left:auto; text-align:center;}
+.spotlight .stat-box .num{font-family:var(--font-mono); font-size:44px; font-weight:700; color:var(--gold);}
+.spotlight .stat-box .lab{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-dim); margin-top:4px;}
+.spotlight .go{margin-top:16px;}
+
+/* ---- features ---- */
+.features{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media(max-width:760px){ .features{grid-template-columns:1fr 1fr;} }
+@media(max-width:520px){ .features{grid-template-columns:1fr;} }
+.feature{border:1px solid var(--line); border-radius:12px; padding:24px 20px; background:var(--bg-panel);}
+.feature .ic{font-size:24px; margin-bottom:12px;}
+.feature .name{font-weight:700; font-size:15px; margin-bottom:6px;}
+.feature .desc{font-size:13px; color:var(--text-dim); line-height:1.6;}
+
+/* ================= PHOTO CAROUSEL / SLIDER ================= */
+/*
+  To add your own photos: put them in an "images" folder next to this CSS
+  file (e.g. images/slide1.jpg), then replace each URL below with
+  url('images/slide1.jpg') and so on.
+  Add more slides by copying a .slide div in index.html AND adding a
+  matching .dot button, then add a matching .slideN rule here.
+*/
+.carousel{position:relative; border-radius:14px; overflow:hidden; border:1px solid var(--line);}
+.slides{display:flex; transition:transform .5s ease; width:400%;}
+.slide{width:25%; aspect-ratio:16/8; background-size:cover; background-position:center; position:relative;}
+.slide::after{content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.55), transparent 45%);}
+.slide .cap{position:absolute; bottom:18px; left:22px; z-index:2; font-family:var(--font-mono); font-size:12.5px; letter-spacing:.06em; color:var(--text);}
+.slide1{background-image:url('https://images.unsplash.com/photo-1611251135345-18c56206b863?q=80&w=1974&auto=format&fit=crop');}
+.slide2{background-image:url('https://images.unsplash.com/photo-1534158914592-062992fbe900?q=80&w=1974&auto=format&fit=crop');}
+.slide3{background-image:url('https://images.unsplash.com/photo-1560089168-6516081ba64f?q=80&w=1974&auto=format&fit=crop');}
+.slide4{background-image:url('https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=1974&auto=format&fit=crop');}
+.carousel-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  background:rgba(13,17,23,0.65); border:1px solid var(--line); color:var(--text);
+  width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+}
+.carousel-arrow.prev{left:14px;} .carousel-arrow.next{right:14px;}
+.dots{display:flex; gap:8px; justify-content:center; margin-top:16px;}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--line); border:none; cursor:pointer; padding:0;}
+.dot.active{background:var(--accent);}
+
+/* ================= VIDEO SECTION ================= */
+/* Replace the <source src="..."> in the HTML below with your own footage. */
+.video-frame{
+  position:relative; border-radius:14px; overflow:hidden; border:1px solid var(--line);
+  aspect-ratio:16/9; background:var(--bg-panel);
+}
+.video-frame video{width:100%; height:100%; object-fit:cover;}
+.video-placeholder{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; color:var(--text-dim); font-size:13px; text-align:center; padding:20px;
+}
+.play-ic{
+  width:64px; height:64px; border-radius:50%; background:var(--accent); color:#0d0d0d;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+
+/* ---- steps ---- */
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+@media(max-width:700px){ .steps{grid-template-columns:1fr;} }
+.step{background:var(--bg-panel); padding:26px 22px;}
+.step .n{font-family:var(--font-mono); font-size:12px; color:var(--gold); margin-bottom:10px;}
+.step .t{font-weight:700; font-size:15px; margin-bottom:6px;}
+.step .d{font-size:13px; color:var(--text-dim); line-height:1.6;}
+
+footer{text-align:center; padding:44px 24px 56px; color:var(--text-dim); font-size:12.5px; border-top:1px solid var(--line); margin-top:20px;}
+footer .org{color:var(--text); font-weight:700; margin-bottom:6px; font-size:14px; font-family:var(--font-display); letter-spacing:.02em;}
