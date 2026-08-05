@@ -71,16 +71,42 @@
     </section>
 
     <section id="register">
+      <div class="section-head">
+        <div class="section-kicker">Live Now</div>
+        <div class="section-title">Registration Status</div>
+      </div>
+      <div class="live-counter" id="live-counter">
+        <div class="cell"><div class="num" id="count-total">–</div><div class="lab">Total Registered</div></div>
+        <div class="cell"><div class="num" id="count-junior">–</div><div class="lab">Juniors</div></div>
+        <div class="cell"><div class="num" id="count-men">–</div><div class="lab">Senior Men</div></div>
+        <div class="cell"><div class="num" id="count-ladies">–</div><div class="lab">Senior Ladies</div></div>
+      </div>
+
       <div class="register-block">
         <h3>Reserve Your Spot</h3>
-        <p>Registration is online only this season — book below so we can confirm your table time and category.</p>
-        <a class="btn btn-primary" href="#form-slot">Scroll to Form ↓</a>
+        <p>Fill in your details below — your entry is confirmed once payment is verified.</p>
 
-        <!-- ORGANIZER: replace this comment with your Google Form embed <iframe> -->
-        <div id="form-slot">
-          <!-- <iframe src="YOUR_GOOGLE_FORM_EMBED_URL" frameborder="0">Loading…</iframe> -->
-        </div>
-        <div class="form-embed-note">Organizer note: paste your Google Form embed code inside the <code>#form-slot</code> div in this file.</div>
+        <form class="reg-form" id="reg-form">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" required placeholder="e.g. Jane Wanjiru">
+
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" required placeholder="e.g. 0712345678">
+
+          <label for="category">Category</label>
+          <select id="category" required>
+            <option value="">Select a category</option>
+            <option value="a6843ff0-0643-4328-800c-f27065e8df4d">Juniors — Ksh 100</option>
+            <option value="6b34289d-b1e9-4700-bb39-fc109573147b">Senior Men — Ksh 200</option>
+            <option value="9bc6d79a-f673-46e0-930c-484c0bb0d974">Senior Ladies — Ksh 200</option>
+          </select>
+
+          <label for="mpesa_code">M-Pesa Code (optional — add now or pay at the venue)</label>
+          <input type="text" id="mpesa_code" placeholder="e.g. QFT7X8Y2ZP">
+
+          <button type="submit" id="reg-submit">Register Now</button>
+          <div class="reg-msg" id="reg-msg"></div>
+        </form>
       </div>
     </section>
 
@@ -90,6 +116,91 @@
     <div class="org">BARENA — Kiambu County · Phase 01</div>
     Hosted with ACK Emanuel Church Karuri, Diocese of Mount Kenya South
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ---- CONFIG ----
+    const SUPABASE_URL = "https://xtbvzdupauxuxchhmshd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo";
+    const TOURNAMENT_ID = "0412efac-41e8-4071-9a55-c4029bb70e7d";
+    const CATEGORY_IDS = {
+      junior: "a6843ff0-0643-4328-800c-f27065e8df4d",
+      men: "6b34289d-b1e9-4700-bb39-fc109573147b",
+      ladies: "9bc6d79a-f673-46e0-930c-484c0bb0d974"
+    };
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ---- LIVE COUNTER ----
+    async function refreshCounts(){
+      const { count: total } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).in('category_id', Object.values(CATEGORY_IDS));
+      const { count: junior } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.junior);
+      const { count: men } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.men);
+      const { count: ladies } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.ladies);
+
+      document.getElementById('count-total').textContent = total ?? 0;
+      document.getElementById('count-junior').textContent = junior ?? 0;
+      document.getElementById('count-men').textContent = men ?? 0;
+      document.getElementById('count-ladies').textContent = ladies ?? 0;
+    }
+    refreshCounts();
+
+    // Live updates: refresh counts the moment any new entry is added, by anyone
+    sb.channel('category_entries_changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'category_entries' }, refreshCounts)
+      .subscribe();
+
+    // ---- REGISTRATION SUBMIT ----
+    const form = document.getElementById('reg-form');
+    const msg = document.getElementById('reg-msg');
+    const submitBtn = document.getElementById('reg-submit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Registering…";
+      msg.textContent = "";
+      msg.className = "reg-msg";
+
+      const full_name = document.getElementById('full_name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const category_id = document.getElementById('category').value;
+      const mpesa_code = document.getElementById('mpesa_code').value.trim();
+
+      try{
+        // 1. Create the player
+        const { data: player, error: playerErr } = await sb
+          .from('players')
+          .insert({ full_name, phone })
+          .select('id')
+          .single();
+        if (playerErr) throw playerErr;
+
+        // 2. Enter them into the chosen category
+        const { error: entryErr } = await sb
+          .from('category_entries')
+          .insert({
+            category_id,
+            player_id: player.id,
+            payment_status: mpesa_code ? 'pending' : 'pending',
+            mpesa_code: mpesa_code || null
+          });
+        if (entryErr) throw entryErr;
+
+        msg.textContent = "✅ You're registered! We'll confirm your entry once payment is verified.";
+        msg.classList.add('ok');
+        form.reset();
+        refreshCounts();
+      } catch(err){
+        console.error(err);
+        msg.textContent = "Something went wrong — please try again or contact the organizers.";
+        msg.classList.add('err');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Register Now";
+      }
+    });
+  </script>
 
 </body>
 </html>
