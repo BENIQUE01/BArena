@@ -26,7 +26,7 @@
      2. Replace the URL below with: url('images/hero.jpg')
      Or swap the whole header.hero rule below to use a <video>
      instead (see notes in the HTML comment above the hero section). */
-  --hero-image: url('images/hero.jpg');
+  --hero-image: url('assets/images/hero.jpg');
 }
 /* ============================================================
    END THEME CONFIG
