@@ -1,0 +1,91 @@
+/* ============================================================
+   THEME CONFIG — edit everything below to change the look.
+   Every page links this file first, so a change here updates
+   the whole site at once.
+   ============================================================ */
+:root{
+  /* --- Colors --- */
+  --bg:            #0d1117;   /* main background */
+  --bg-panel:      #161b22;   /* card / panel background */
+  --accent:        #ff6a3d;   /* primary accent — CTAs, live indicators */
+  --accent-dim:    #cc4f28;
+  --accent2:       #29b6f6;   /* secondary accent — data, links, scoreboard glow */
+  --gold:          #f2c14e;   /* prizes / highlights */
+  --text:          #f5f7fa;   /* main text */
+  --text-dim:      rgba(245,247,250,0.62);
+  --line:          rgba(245,247,250,0.12);
+
+  /* --- Fonts --- */
+  --font-display:  'Bebas Neue', sans-serif;   /* headlines */
+  --font-body:     'Inter', sans-serif;        /* body copy */
+  --font-mono:     'Space Mono', monospace;    /* scoreboard / stats */
+
+  /* --- Hero background media (used on home.css) --- */
+  --hero-image: url('../images/hero.jpg');
+}
+/* ============================================================
+   END THEME CONFIG
+   ============================================================ */
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body); line-height:1.55;}
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+a{color:inherit;}
+img{display:block; max-width:100%;}
+
+/* ---- nav (every page) ---- */
+nav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 28px; border-bottom:1px solid var(--line);
+  position:sticky; top:0; background:rgba(13,17,23,0.85); backdrop-filter:blur(10px); z-index:30;
+}
+.brand{font-family:var(--font-display); font-size:26px; letter-spacing:.03em;}
+.brand span{color:var(--accent);}
+.navlinks{display:flex; gap:28px; font-size:13.5px; font-weight:600;}
+.navlinks a{text-decoration:none; color:var(--text-dim); transition:color .15s;}
+.navlinks a:hover{color:var(--text);}
+.nav-cta{background:var(--accent); color:#0d0d0d; font-weight:700; font-size:13px; padding:10px 20px; border-radius:6px; text-decoration:none;}
+@media(max-width:760px){ .navlinks{display:none;} }
+
+/* ---- buttons (every page) ---- */
+.btn{display:inline-block; font-weight:700; font-size:14.5px; padding:15px 32px; border-radius:6px; text-decoration:none; transition:transform .15s ease;}
+.btn:hover{transform:translateY(-2px);}
+.btn-primary{background:var(--accent); color:#0d0d0d;}
+.btn-ghost{border:1px solid rgba(245,247,250,0.35); color:var(--text);}
+
+/* ---- section headers (every page) ---- */
+section{padding:64px 0;}
+.section-head{margin-bottom:30px; max-width:600px;}
+.section-kicker{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:10px;}
+.section-title{font-family:var(--font-display); text-transform:uppercase; font-size:38px; letter-spacing:.01em; line-height:1;}
+.section-desc{color:var(--text-dim); font-size:15px; margin-top:12px;}
+
+/* ---- footer (every page) ---- */
+footer{text-align:center; padding:44px 24px 56px; color:var(--text-dim); font-size:12.5px; border-top:1px solid var(--line); margin-top:20px;}
+footer .org{color:var(--text); font-weight:700; margin-bottom:6px; font-size:14px; font-family:var(--font-display); letter-spacing:.02em;}
+
+/* ---- live counter (used on kiambu event page + admin page) ---- */
+.live-counter{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:36px 0;}
+@media(max-width:600px){ .live-counter{grid-template-columns:1fr 1fr;} }
+.live-counter .cell{background:var(--bg-panel); padding:20px 14px; text-align:center;}
+.live-counter .num{font-family:var(--font-mono); font-weight:700; font-size:30px; color:var(--accent2); text-shadow:0 0 14px rgba(41,182,246,0.4);}
+.live-counter .lab{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); margin-top:6px;}
+
+/* ---- form inputs (used on kiambu registration + admin login) ---- */
+.reg-form{max-width:420px; margin:26px auto 0; text-align:left;}
+.reg-form label{display:block; font-size:12.5px; font-weight:600; color:var(--text-dim); margin-bottom:6px; margin-top:16px;}
+.reg-form label:first-child{margin-top:0;}
+.reg-form input, .reg-form select{
+  width:100%; padding:12px 14px; border-radius:8px; border:1px solid var(--line);
+  background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:14px;
+}
+.reg-form input:focus, .reg-form select:focus{outline:none; border-color:var(--accent2);}
+.reg-form button{
+  width:100%; margin-top:22px; background:var(--accent); color:#0d0d0d; font-weight:700;
+  font-size:14.5px; padding:14px; border:none; border-radius:8px; cursor:pointer;
+}
+.reg-form button:disabled{opacity:.5; cursor:not-allowed;}
+.reg-msg{margin-top:14px; font-size:13px; text-align:center;}
+.reg-msg.ok{color:var(--accent2);}
+.reg-msg.err{color:#ff6a6a;}

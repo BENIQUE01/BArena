@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARENA Admin — Banana Smash S04</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body>
+
+  <nav>
+    <div class="brand">BAR<span>ENA</span> <span style="font-size:12px; color:var(--text-dim); font-family:var(--font-body); font-weight:600;">ADMIN</span></div>
+    <div class="navlinks"></div>
+    <a class="nav-cta" href="../../index.html">← Site</a>
+  </nav>
+
+  <div class="wrap">
+
+    <div id="login-view" class="admin-login">
+      <h2>Admin Login</h2>
+      <p>Sign in with your BARENA app account to manage Banana Smash S04 registrations.</p>
+      <form class="reg-form" id="login-form">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required placeholder="you@example.com">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+        <button type="submit" id="login-btn">Sign In</button>
+        <div class="reg-msg" id="login-msg"></div>
+      </form>
+    </div>
+
+    <div id="admin-view" style="display:none;">
+      <div class="admin-bar">
+        <div>
+          <div class="section-title" style="font-size:24px;">Banana Smash S04 — Registrations</div>
+          <div class="who" id="who-label"></div>
+        </div>
+        <button id="logout-btn">Sign Out</button>
+      </div>
+
+      <div class="live-counter" id="admin-counter">
+        <div class="cell"><div class="num" id="ac-total">–</div><div class="lab">Total</div></div>
+        <div class="cell"><div class="num" id="ac-confirmed">–</div><div class="lab">Confirmed</div></div>
+        <div class="cell"><div class="num" id="ac-pending">–</div><div class="lab">Pending</div></div>
+        <div class="cell"><div class="num" id="ac-revenue">–</div><div class="lab">Ksh Confirmed</div></div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="entries-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Category</th>
+              <th>M-Pesa Code</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="entries-body">
+            <tr><td colspan="6" class="admin-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://xtbvzdupauxuxchhmshd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo";
+    const TOURNAMENT_ID = "0412efac-41e8-4071-9a55-c4029bb70e7d";
+    const CATEGORY_FEES = {
+      "a6843ff0-0643-4328-800c-f27065e8df4d": 100,
+      "6b34289d-b1e9-4700-bb39-fc109573147b": 200,
+      "9bc6d79a-f673-46e0-930c-484c0bb0d974": 200
+    };
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loginView = document.getElementById('login-view');
+    const adminView = document.getElementById('admin-view');
+    const loginForm = document.getElementById('login-form');
+    const loginMsg = document.getElementById('login-msg');
+    const loginBtn = document.getElementById('login-btn');
+    const whoLabel = document.getElementById('who-label');
+
+    async function checkSession(){
+      const { data: { session } } = await sb.auth.getSession();
+      if (session){
+        showAdmin(session.user.email);
+      } else {
+        loginView.style.display = 'block';
+        adminView.style.display = 'none';
+      }
+    }
+
+    function showAdmin(email){
+      loginView.style.display = 'none';
+      adminView.style.display = 'block';
+      whoLabel.textContent = `Signed in as ${email}`;
+      loadEntries();
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Signing in…";
+      loginMsg.textContent = "";
+      loginMsg.className = "reg-msg";
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error){
+        loginMsg.textContent = "Login failed — check your email and password.";
+        loginMsg.classList.add('err');
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Sign In";
+      } else {
+        showAdmin(data.user.email);
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      location.reload();
+    });
+
+    async function loadEntries(){
+      const tbody = document.getElementById('entries-body');
+      tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">Loading…</td></tr>`;
+
+      const { data, error } = await sb
+        .from('category_entries')
+        .select('id, payment_status, mpesa_code, registered_at, category_id, players(full_name, phone), categories(name)')
+        .in('category_id', Object.keys(CATEGORY_FEES))
+        .order('registered_at', { ascending: false });
+
+      if (error){
+        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">Couldn't load entries — ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!data || data.length === 0){
+        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">No registrations yet.</td></tr>`;
+        updateCounters([]);
+        return;
+      }
+
+      tbody.innerHTML = data.map(row => `
+        <tr>
+          <td>${row.players?.full_name ?? '—'}</td>
+          <td>${row.players?.phone ?? '—'}</td>
+          <td>${row.categories?.name ?? '—'}</td>
+          <td>${row.mpesa_code ?? '<span style="color:var(--text-dim)">none</span>'}</td>
+          <td><span class="badge ${row.payment_status === 'confirmed' ? 'confirmed' : 'pending'}">${row.payment_status}</span></td>
+          <td>
+            ${row.payment_status === 'confirmed'
+              ? `<button class="mark-btn undo" data-id="${row.id}" data-status="pending">Undo</button>`
+              : `<button class="mark-btn" data-id="${row.id}" data-status="confirmed">Mark as Paid</button>`}
+          </td>
+        </tr>
+      `).join('');
+
+      document.querySelectorAll('.mark-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          const newStatus = btn.dataset.status;
+          btn.disabled = true;
+          btn.textContent = "…";
+          const { error } = await sb.from('category_entries').update({ payment_status: newStatus }).eq('id', id);
+          if (error){
+            alert("Couldn't update: " + error.message);
+            btn.disabled = false;
+          } else {
+            loadEntries();
+          }
+        });
+      });
+
+      updateCounters(data);
+    }
+
+    function updateCounters(data){
+      const total = data.length;
+      const confirmed = data.filter(r => r.payment_status === 'confirmed');
+      const pending = total - confirmed.length;
+      const revenue = confirmed.reduce((sum, r) => sum + (CATEGORY_FEES[r.category_id] || 0), 0);
+
+      document.getElementById('ac-total').textContent = total;
+      document.getElementById('ac-confirmed').textContent = confirmed.length;
+      document.getElementById('ac-pending').textContent = pending;
+      document.getElementById('ac-revenue').textContent = revenue.toLocaleString();
+    }
+
+    checkSession();
+  </script>
+
+</body> 
