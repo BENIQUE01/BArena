@@ -1,12 +1,12 @@
 /* ================= ADMIN PAGES ONLY ================= */
 /* Loaded by admin/index.html and admin/kiambu/s04.html, after base.css */
 
-.admin-login{max-width:360px; margin:80px auto; text-align:center;}
+.admin-login{max-width:360px; margin:80px auto; text-align:center; background:rgba(22,27,34,0.7); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:18px; padding:40px 32px; box-shadow:0 8px 40px rgba(0,0,0,0.4);}
 .admin-login h2{font-family:var(--font-display); font-size:26px; text-transform:uppercase; margin-bottom:6px;}
 .admin-login p{color:var(--text-dim); font-size:13.5px; margin-bottom:20px;}
 .admin-login .reg-form{margin-top:0;}
 
-.admin-bar{display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-bottom:1px solid var(--line); margin-bottom:24px;}
+.admin-bar{display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border:1px solid var(--line); border-radius:14px; margin-bottom:24px; background:rgba(22,27,34,0.7); backdrop-filter:blur(12px);}
 .admin-bar .who{font-size:13px; color:var(--text-dim);}
 .admin-bar button{background:none; border:1px solid var(--line); color:var(--text-dim); font-size:12.5px; padding:8px 16px; border-radius:6px; cursor:pointer;}
 .admin-bar button:hover{color:var(--text); border-color:var(--text-dim);}
@@ -17,7 +17,7 @@
   color:var(--accent); padding:10px 12px; border-bottom:1px solid var(--line);
 }
 .admin-table td{padding:12px; border-bottom:1px solid var(--line); color:var(--text);}
-.admin-table tr:hover td{background:var(--bg-panel);}
+.admin-table tr:hover td{background:rgba(22,27,34,0.7); backdrop-filter:blur(8px);}
 
 .badge{display:inline-block; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase;}
 .badge.confirmed{background:rgba(41,182,246,0.15); color:var(--accent2);}
@@ -27,5 +27,5 @@
   background:var(--accent); color:#0d0d0d; border:none; font-weight:700; font-size:12px;
   padding:7px 14px; border-radius:6px; cursor:pointer;
 }
-.admin-table button.mark-btn.undo{background:none; border:1px solid var(--line); color:var(--text-dim);}
+.admin-table button.mark-btn.undo{background:rgba(22,27,34,0.6); backdrop-filter:blur(8px); border:1px solid var(--line); color:var(--text-dim);}
 .admin-empty{text-align:center; padding:40px; color:var(--text-dim); font-size:14px;}

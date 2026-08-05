@@ -8,6 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/admin.css">
+<style>
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+.live-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.admin-login p{margin-bottom:0;}
+</style>
 </head>
 <body>
 
@@ -20,8 +26,9 @@
   <div class="wrap">
 
     <div id="login-view" class="admin-login">
+      <div class="hero-badge"><span class="live-indicator"></span>Banana Smash S04 — Admin</div>
       <h2>Admin Login</h2>
-      <p>Sign in with your BARENA app account to manage Banana Smash S04 registrations.</p>
+      <p>Sign in with your BARENA account to manage registrations.</p>
       <form class="reg-form" id="login-form">
         <label for="login-email">Email or Username</label>
         <input type="text" id="login-email" required placeholder="username or email">
@@ -41,7 +48,7 @@
         <button id="logout-btn">Sign Out</button>
       </div>
 
-      <div class="live-counter" id="admin-counter">
+      <div class="live-counter" id="admin-counter" style="background:rgba(22,27,34,0.6); backdrop-filter:blur(12px); box-shadow:0 4px 24px rgba(0,0,0,0.3);">
         <div class="cell"><div class="num" id="ac-total">–</div><div class="lab">Total</div></div>
         <div class="cell"><div class="num" id="ac-confirmed">–</div><div class="lab">Confirmed</div></div>
         <div class="cell"><div class="num" id="ac-pending">–</div><div class="lab">Pending</div></div>

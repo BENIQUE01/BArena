@@ -6,21 +6,22 @@
   <title>Gallery — BArena</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/base.css"/>
- <link rel="stylesheet" href="assets/css/gallery.css"/>
 </head>
 <body>
 
-nav>
-  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="tournaments.html">Tournaments</a></li>
-    <li><a href="calendar.html">Calendar</a></li>
-    <li><a href="gallery.html" class="active">Gallery</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
+<nav>
+  <div class="brand">BAR<span>ENA</span></div>
+  <div class="navlinks">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="tournaments.html">Tournaments</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+  </div>
+  <a class="nav-cta" href="kiambu/s04/">Register</a>
 </nav>
 
 <div class="page-hero">
@@ -54,7 +55,7 @@ nav>
 
 <script>
   const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
-  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON);

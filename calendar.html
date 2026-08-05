@@ -6,22 +6,23 @@
   <title>Calendar — BArena</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/base.css"/>
-  <link rel="stylesheet" href="assets/css/calendar.css"/>
 
 </head>
 <body>
 
 <nav>
-  <a class="nav-brand" href="index.html">B<span>A</span>rena</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="tournaments.html">Tournaments</a></li>
-    <li><a href="calendar.html" class="active">Calendar</a></li>
-    <li><a href="gallery.html">Gallery</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
+  <div class="brand">BAR<span>ENA</span></div>
+  <div class="navlinks">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="tournaments.html">Tournaments</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+  </div>
+  <a class="nav-cta" href="kiambu/s04/">Register</a>
 </nav>
 
 <div class="page-hero">
@@ -42,7 +43,7 @@
 
 <script>
   const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
-  const SUPABASE_ANON = 'sb_publishable_zaUMzIwBb9xVtgNhManB9Q_HJooFnjB';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -52,18 +53,28 @@
 
   async function loadEvents() {
     const { data: events, error } = await db
-      .from('events')
-      .select('*')
+      .from('tournaments')
+      .select('id, name, slug, status, start_date, end_date, venue, sport_id, institution_id')
+      .eq('is_public', true)
+      .not('start_date', 'is', null)
       .order('start_date', { ascending: false });
 
     if (error) { renderError(); return; }
 
+    // Count confirmed entries per tournament via categories
     const { data: regCounts } = await db
-      .from('registrations')
-      .select('event_id');
+      .from('category_entries')
+      .select('category_id, categories!inner(tournament_id)')
+      .eq('payment_status', 'confirmed');
 
+    // Map tournament_id → count
     const countMap = {};
-    if (regCounts) regCounts.forEach(r => { countMap[r.event_id] = (countMap[r.event_id] || 0) + 1; });
+    if (regCounts) {
+      regCounts.forEach(r => {
+        const tid = r.categories?.tournament_id;
+        if (tid) countMap[tid] = (countMap[tid] || 0) + 1;
+      });
+    }
 
     allEvents = (events || []).map(e => ({
       ...e,
@@ -78,7 +89,9 @@
     const isUpcoming = activeTab === 'upcoming';
 
     const filtered = allEvents.filter(e =>
-      isUpcoming ? (e.status === 'live' || e.status === 'upcoming') : e.status === 'past'
+      isUpcoming
+        ? (e.status === 'upcoming' || e.status === 'ongoing')
+        : e.status === 'completed'
     );
 
     if (filtered.length === 0) {
@@ -122,7 +135,9 @@
     const mon = d.toLocaleDateString('en-KE', { month: 'short' });
     const statusClass = `pill-${e.status}`;
     const statusLabel = e.status === 'live' ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
-    const href = e.registration_url || 'kiambu/s04/index.html';
+    const href = e.slug === 'banana-smash-s04' ? '../../kiambu/s04/index.html'
+               : e.slug === 'banana-smash-s2-1782044002661' ? '../../kiambu/s02/index.html'
+               : '#';
 
     return `
     <a class="event-row" href="${href}">

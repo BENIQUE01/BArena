@@ -183,20 +183,20 @@
         </div>
         <div class="showcase-right">
           <div class="category-grid">
-            <div class="category-card">
+          <div class="category-card">
               <div class="category-name">Juniors</div>
               <div class="category-fee">Ksh 100</div>
-              <div class="category-badge">5 Registered</div>
+              <div class="category-badge" id="home-junior">– Registered</div>
             </div>
             <div class="category-card">
               <div class="category-name">Senior Men</div>
               <div class="category-fee">Ksh 200</div>
-              <div class="category-badge">8 Registered</div>
+              <div class="category-badge" id="home-men">– Registered</div>
             </div>
             <div class="category-card">
               <div class="category-name">Senior Ladies</div>
               <div class="category-fee">Ksh 200</div>
-              <div class="category-badge">3 Registered</div>
+              <div class="category-badge" id="home-ladies">– Registered</div>
             </div>
           </div>
         </div>
@@ -438,6 +438,21 @@
       const confirmed = data?.filter(r => r.payment_status === 'confirmed').length || 0;
       document.getElementById('total-live').textContent     = total;
       document.getElementById('confirmed-live').textContent = confirmed;
+
+      const CATEGORY_IDS = {
+        junior: "a6843ff0-0643-4328-800c-f27065e8df4d",
+        men:    "6b34289d-b1e9-4700-bb39-fc109573147b",
+        ladies: "9bc6d79a-f673-46e0-930c-484c0bb0d974"
+      };
+      const counts = { junior:0, men:0, ladies:0 };
+      data?.forEach(r => {
+        if(r.category_id === CATEGORY_IDS.junior) counts.junior++;
+        else if(r.category_id === CATEGORY_IDS.men) counts.men++;
+        else if(r.category_id === CATEGORY_IDS.ladies) counts.ladies++;
+      });
+      document.getElementById('home-junior').textContent  = counts.junior  + ' Registered';
+      document.getElementById('home-men').textContent     = counts.men     + ' Registered';
+      document.getElementById('home-ladies').textContent  = counts.ladies  + ' Registered';
     }
 
     updateCounters();

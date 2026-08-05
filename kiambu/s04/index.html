@@ -8,29 +8,48 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/kiambu.css">
+<style>
+.hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0;}
+.glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;}
+.glow-1{width:500px;height:500px;background:var(--accent);top:-100px;left:-100px;}
+.glow-2{width:400px;height:400px;background:var(--accent2);bottom:-80px;right:-80px;}
+.hero-inner{position:relative;z-index:1;padding:80px 24px 60px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;}
+.live-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+</style>
 </head>
 <body>
 
   <nav>
     <div class="brand">BAR<span>ENA</span></div>
     <div class="navlinks">
-      <a href="../../index.html#features">Features</a>
-      <a href="../../index.html#gallery">Gallery</a>
-      <a href="../../index.html#kiambu">Kiambu Edition</a>
-      <a href="../../index.html#calendar">Calendar</a>
+      <a href="../../index.html">Home</a>
+      <a href="../../features.html">Features</a>
+      <a href="../../tournaments.html">Tournaments</a>
+      <a href="../../calendar.html">Calendar</a>
+      <a href="../../gallery.html">Gallery</a>
+      <a href="../../about.html">About</a>
     </div>
     <a class="nav-cta" href="#register">Register</a>
   </nav>
 
-  <header class="hero" style="min-height:60vh;">
+  <header class="hero" style="min-height:60vh; position:relative; overflow:hidden;">
+    <div class="hero-bg">
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+    </div>
     <div class="hero-inner">
-      <span class="eyebrow">BARENA · Kiambu County — Phase 01</span>
-      <div class="title">
-        <span class="l1" style="font-size:clamp(44px,10vw,88px);">Banana Smash</span>
-        <span class="l2">Season 04 — Kiambu County's First Live Test Phase</span>
+      <div class="hero-badge">
+        <span class="live-indicator"></span>
+        Phase 01 — Kiambu Edition Live
       </div>
-      <p class="lead">Two days, three categories, real cash prizes on the line. Book your spot below.</p>
-      <div class="hero-ctas">
+      <div class="title">
+        <span class="l1" style="font-family:var(--font-display); font-size:clamp(44px,10vw,88px); text-transform:uppercase; letter-spacing:.02em;">Banana Smash</span>
+        <span class="l2" style="display:block; font-size:clamp(14px,2.5vw,20px); color:var(--text-dim); margin-top:10px;">Season 04 — Kiambu County · Aug 22–23, 2026</span>
+      </div>
+      <p class="lead" style="color:var(--text-dim); font-size:16px; margin-top:16px; max-width:500px;">Two days, three categories, real cash prizes on the line. Book your spot below.</p>
+      <div class="hero-ctas" style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
         <a class="btn btn-primary" href="#register">Register Now →</a>
         <a class="btn btn-ghost" href="../../index.html">← Back to BARENA</a>
       </div>
@@ -81,6 +100,13 @@
         <div class="cell"><div class="num" id="count-junior">–</div><div class="lab">Juniors</div></div>
         <div class="cell"><div class="num" id="count-men">–</div><div class="lab">Senior Men</div></div>
         <div class="cell"><div class="num" id="count-ladies">–</div><div class="lab">Senior Ladies</div></div>
+      </div>
+
+      <div class="confirmed-list-block">
+        <div class="section-kicker" style="margin-bottom:12px;">✅ Confirmed Players</div>
+        <div id="confirmed-list" class="confirmed-list">
+          <div class="confirmed-empty">No confirmed players yet — be the first!</div>
+        </div>
       </div>
 
       <div class="register-block">
@@ -145,10 +171,11 @@
       document.getElementById('count-ladies').textContent = ladies ?? 0;
     }
     refreshCounts();
+    loadConfirmedPlayers();
 
     // Live updates: refresh counts the moment any new entry is added, by anyone
     sb.channel('category_entries_changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'category_entries' }, refreshCounts)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => { refreshCounts(); loadConfirmedPlayers(); })
       .subscribe();
 
     // ---- REGISTRATION SUBMIT ----
@@ -201,6 +228,38 @@
         submitBtn.textContent = "Register Now";
       }
     });
+
+    async function loadConfirmedPlayers(){
+      const { data, error } = await sb
+        .from('category_entries')
+        .select('payment_status, category_id, players(full_name, club, global_rating, institution_id), categories(name)')
+        .in('category_id', Object.values(CATEGORY_IDS))
+        .eq('payment_status', 'confirmed')
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('confirmed-list');
+      if (error || !data || data.length === 0){
+        container.innerHTML = '<div class="confirmed-empty">No confirmed players yet — be the first!</div>';
+        return;
+      }
+
+      container.innerHTML = data.map(r => {
+        const p = r.players;
+        const name = p?.full_name ? p.full_name.split(' ')[0] + ' ' + (p.full_name.split(' ')[1]?.[0] || '') + '.' : '—';
+        const club = p?.club || 'Independent';
+        const rating = p?.global_rating ? `<span class="cp-rating">⭐ ${p.global_rating}</span>` : '';
+        const cat = r.categories?.name || '';
+        return `
+          <div class="confirmed-player">
+            <div class="cp-left">
+              <div class="cp-name">${name}</div>
+              <div class="cp-meta">${club} · ${cat}</div>
+            </div>
+            <div class="cp-right">${rating}</div>
+          </div>`;
+      }).join('');
+    }
+
   </script>
 
 </body>
