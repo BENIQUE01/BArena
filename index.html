@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARENA — Global Tournament Management Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --court-green:#0b3d1e;
+    --court-green-dark:#062712;
+    --net-white:#f7f9f4;
+    --smash-lime:#a6e22e;
+    --smash-lime-deep:#7fb622;
+    --gold:#e0b13c;
+    --ink:#0a1a0f;
+    --line:rgba(247,249,244,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(166,226,46,0.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(166,226,46,0.07), transparent 55%),
+      var(--court-green-dark);
+    color:var(--net-white);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px;}
+  a{color:inherit;}
+
+  /* ---- nav ---- */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px;
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0;
+    background:rgba(6,39,18,0.88);
+    backdrop-filter:blur(8px);
+    z-index:20;
+  }
+  .brand{font-family:'Anton', sans-serif; font-size:20px; letter-spacing:.04em; color:var(--net-white);}
+  .brand span{color:var(--smash-lime);}
+  .navlinks{display:flex; gap:26px; font-size:13.5px; font-weight:600;}
+  .navlinks a{text-decoration:none; color:rgba(247,249,244,0.75); transition:color .15s;}
+  .navlinks a:hover{color:var(--smash-lime);}
+  .nav-cta{
+    background:var(--smash-lime); color:var(--ink); font-weight:700; font-size:13px;
+    padding:9px 18px; border-radius:999px; text-decoration:none;
+  }
+  @media(max-width:700px){ .navlinks{display:none;} }
+
+  /* ---- ticker ---- */
+  .ticker{background:var(--ink); border-bottom:1px solid var(--line); overflow:hidden; white-space:nowrap; padding:8px 0;}
+  .ticker span{display:inline-block; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:var(--smash-lime); font-weight:600; animation:scroll 26s linear infinite;}
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---- hero ---- */
+  header.hero{padding:72px 0 48px; text-align:center;}
+  .eyebrow{
+    display:inline-block; font-size:12.5px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--gold); font-weight:600; border:1px solid rgba(224,177,60,0.4);
+    padding:6px 14px; border-radius:999px; margin-bottom:24px;
+  }
+  .title{font-family:'Anton', sans-serif; font-weight:400; line-height:0.94; text-transform:uppercase;}
+  .title .l1{font-size:clamp(52px,11vw,88px); color:var(--net-white); display:block;}
+  .title .l2{
+    font-size:clamp(24px,5vw,34px); display:block; letter-spacing:.04em;
+    color:var(--smash-lime); margin-top:10px; text-transform:none; font-family:'Work Sans',sans-serif; font-weight:700;
+  }
+  .hero p.lead{margin:24px auto 0; max-width:520px; color:rgba(247,249,244,0.75); font-size:15.5px;}
+  .hero-ctas{display:flex; gap:14px; justify-content:center; margin-top:32px; flex-wrap:wrap;}
+  .btn{
+    display:inline-block; font-weight:700; font-size:14.5px; padding:14px 30px;
+    border-radius:999px; text-decoration:none; transition:transform .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--smash-lime); color:var(--ink);}
+  .btn-ghost{border:1px solid rgba(247,249,244,0.3); color:var(--net-white);}
+
+  /* ---- hierarchy strip: the signature element ---- */
+  .hierarchy{margin:64px 0; padding:8px 0;}
+  .hierarchy-label{text-align:center; font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:rgba(247,249,244,0.45); margin-bottom:22px;}
+  .rungs{display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; max-width:900px; margin:0 auto;}
+  .rung{
+    display:flex; flex-direction:column; align-items:center; padding:0 4px; position:relative;
+  }
+  .rung .dot{width:10px; height:10px; border-radius:50%; background:rgba(247,249,244,0.25); margin-bottom:10px;}
+  .rung.active .dot{background:var(--smash-lime); box-shadow:0 0 0 4px rgba(166,226,46,0.18);}
+  .rung .lab{font-size:11px; font-weight:600; letter-spacing:.04em; color:rgba(247,249,244,0.5); text-align:center; white-space:nowrap;}
+  .rung.active .lab{color:var(--smash-lime);}
+  .rung-line{width:38px; height:1px; background:var(--line); margin-bottom:24px;}
+  @media(max-width:700px){ .rungs{gap:0;} .rung-line{width:16px;} .rung .lab{font-size:9.5px;} }
+
+  /* ---- sections ---- */
+  section{padding:20px 0 56px;}
+  .section-head{margin-bottom:26px;}
+  .section-kicker{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--smash-lime); font-weight:700; margin-bottom:8px;}
+  .section-title{font-family:'Anton', sans-serif; text-transform:uppercase; font-size:26px; letter-spacing:.02em; color:var(--net-white);}
+  .section-desc{color:rgba(247,249,244,0.65); font-size:14.5px; margin-top:8px; max-width:520px;}
+
+  /* features grid */
+  .features{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media(max-width:760px){ .features{grid-template-columns:1fr 1fr;} }
+  @media(max-width:520px){ .features{grid-template-columns:1fr;} }
+  .feature{border:1px solid var(--line); border-radius:12px; padding:20px 18px; background:rgba(247,249,244,0.03);}
+  .feature .ic{font-size:22px; margin-bottom:10px;}
+  .feature .name{font-weight:700; font-size:14.5px; margin-bottom:6px;}
+  .feature .desc{font-size:12.8px; color:rgba(247,249,244,0.6); line-height:1.55;}
+
+  /* spotlight card */
+  .spotlight{
+    border:1px solid rgba(166,226,46,0.35);
+    background:linear-gradient(135deg, rgba(166,226,46,0.08), transparent);
+    border-radius:16px; padding:30px; display:flex; gap:24px; align-items:center; flex-wrap:wrap;
+  }
+  .spotlight .live-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--smash-lime); margin-bottom:10px;
+  }
+  .live-dot{width:7px; height:7px; border-radius:50%; background:var(--smash-lime); animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .spotlight h3{font-family:'Anton', sans-serif; font-size:24px; text-transform:uppercase; margin-bottom:8px;}
+  .spotlight p{font-size:13.8px; color:rgba(247,249,244,0.7); max-width:360px;}
+  .spotlight .stat{margin-left:auto; text-align:center;}
+  .spotlight .stat .num{font-family:'Anton', sans-serif; font-size:40px; color:var(--smash-lime); line-height:1;}
+  .spotlight .stat .lab{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:rgba(247,249,244,0.5); margin-top:4px;}
+  .spotlight .go{margin-top:14px;}
+
+  /* how it works */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  @media(max-width:700px){ .steps{grid-template-columns:1fr;} }
+  .step{background:var(--ink); padding:24px 20px;}
+  .step .n{font-family:'Anton', sans-serif; font-size:13px; color:var(--gold); margin-bottom:10px;}
+  .step .t{font-weight:700; font-size:14.5px; margin-bottom:6px;}
+  .step .d{font-size:12.8px; color:rgba(247,249,244,0.6); line-height:1.55;}
+
+  footer{text-align:center; padding:40px 24px 56px; color:rgba(247,249,244,0.4); font-size:12.5px; border-top:1px solid var(--line); margin-top:20px;}
+  footer .org{color:rgba(247,249,244,0.65); font-weight:600; margin-bottom:6px; font-size:13.5px;}
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="brand">BAR<span>ENA</span></div>
+    <div class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#tournaments">Tournaments</a>
+      <a href="#kiambu">Kiambu Edition</a>
+      <a href="#calendar">Calendar</a>
+    </div>
+    <a class="nav-cta" href="#kiambu">Register</a>
+  </nav>
+
+  <div class="ticker">
+    <span>GLOBAL TOURNAMENT MANAGEMENT PLATFORM&nbsp;&nbsp;•&nbsp;&nbsp;LIVE NOW — BANANA SMASH S04, KIAMBU COUNTY&nbsp;&nbsp;•&nbsp;&nbsp;250+ SPORTS SUPPORTED&nbsp;&nbsp;•&nbsp;&nbsp;INSTITUTION TO OLYMPIC&nbsp;&nbsp;•&nbsp;&nbsp;GLOBAL TOURNAMENT MANAGEMENT PLATFORM&nbsp;&nbsp;•&nbsp;&nbsp;LIVE NOW — BANANA SMASH S04, KIAMBU COUNTY&nbsp;&nbsp;•&nbsp;&nbsp;250+ SPORTS SUPPORTED&nbsp;&nbsp;•&nbsp;&nbsp;INSTITUTION TO OLYMPIC&nbsp;&nbsp;•&nbsp;</span>
+  </div>
+
+  <div class="wrap">
+    <header class="hero">
+      <span class="eyebrow">From Kiambu County to the World</span>
+      <div class="title">
+        <span class="l1">BARENA</span>
+        <span class="l2">Every Sport. Every Level. One Platform.</span>
+      </div>
+      <p class="lead">BARENA runs tournaments the way they deserve to be run — from a Saturday table tennis league at a local church to national and continental championships, all on one system.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#kiambu">See the Kiambu Edition →</a>
+        <a class="btn btn-ghost" href="#features">Explore Features</a>
+      </div>
+    </header>
+
+    <div class="hierarchy">
+      <div class="hierarchy-label">The BARENA Competition Hierarchy</div>
+      <div class="rungs">
+        <div class="rung active"><div class="dot"></div><div class="lab">Institution</div></div>
+        <div class="rung-line"></div>
+        <div class="rung active"><div class="dot"></div><div class="lab">Zone</div></div>
+        <div class="rung-line"></div>
+        <div class="rung active"><div class="dot"></div><div class="lab">County</div></div>
+        <div class="rung-line"></div>
+        <div class="rung"><div class="dot"></div><div class="lab">National</div></div>
+        <div class="rung-line"></div>
+        <div class="rung"><div class="dot"></div><div class="lab">Continental</div></div>
+        <div class="rung-line"></div>
+        <div class="rung"><div class="dot"></div><div class="lab">Global</div></div>
+      </div>
+    </div>
+
+    <section id="kiambu">
+      <div class="spotlight">
+        <div>
+          <div class="live-tag"><span class="live-dot"></span>Live Registration Open</div>
+          <h3>Kiambu County — Banana Smash S04</h3>
+          <p>Kiambu is BARENA's first live test phase. Table Tennis, Aug 22–23, at ACK Emanuel Church Karuri. Juniors, Senior Men &amp; Senior Ladies.</p>
+          <div class="go"><a class="btn btn-primary" href="/kiambu/s04/">Register Now →</a></div>
+        </div>
+        <div class="stat">
+          <div class="num">S04</div>
+          <div class="lab">Current Season</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-head">
+        <div class="section-kicker">Platform</div>
+        <div class="section-title">Built for Every Level of Competition</div>
+        <p class="section-desc">The same tools that run a local table tennis series scale up to run continental championships.</p>
+      </div>
+      <div class="features">
+        <div class="feature"><div class="ic">🏆</div><div class="name">Brackets &amp; Scheduling</div><div class="desc">Automated group stages, knockouts, rest-gap scheduling, and walkover handling for any format.</div></div>
+        <div class="feature"><div class="ic">📈</div><div class="name">ELO Ratings</div><div class="desc">Live rating deltas and predictions, so players see exactly what's on the line before every match.</div></div>
+        <div class="feature"><div class="ic">🌍</div><div class="name">250+ Sport Engines</div><div class="desc">From table tennis to athletics to aquatics — sport-specific rules built in from the ground up.</div></div>
+        <div class="feature"><div class="ic">🪪</div><div class="name">Sport Passport</div><div class="desc">A permanent player ID that follows athletes across institutions, counties, and seasons.</div></div>
+        <div class="feature"><div class="ic">🛡️</div><div class="name">Tiered Admin Structure</div><div class="desc">Institution, county, continental, and global admin roles — the same hierarchy your tournaments run on.</div></div>
+        <div class="feature"><div class="ic">📊</div><div class="name">Global Leaderboards</div><div class="desc">Karma, badges, and rankings that carry weight from a local league up to national standing.</div></div>
+      </div>
+    </section>
+
+    <section id="tournaments">
+      <div class="section-head">
+        <div class="section-kicker">How It Works</div>
+        <div class="section-title">Hosted &amp; Sponsored Tournaments</div>
+        <p class="section-desc">Any institution, church, school, or federation can run a BARENA tournament.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="n">Register</div><div class="t">Book your spot</div><div class="d">Pick your category, pay the entry fee, and you're on the live roster instantly.</div></div>
+        <div class="step"><div class="n">Compete</div><div class="t">Play your bracket</div><div class="d">Matches, scores, and standings update in real time as the tournament runs.</div></div>
+        <div class="step"><div class="n">Progress</div><div class="t">Carry your rating forward</div><div class="d">Results feed your Sport Passport — your standing follows you to the next season and the next level.</div></div>
+      </div>
+    </section>
+
+    <section id="calendar">
+      <div class="section-head">
+        <div class="section-kicker">What's Next</div>
+        <div class="section-title">Calendar</div>
+        <p class="section-desc">Every BARENA tournament, past and upcoming, in one place.</p>
+      </div>
+      <div class="feature" style="max-width:420px;">
+        <div class="name">Full calendar coming online next</div>
+        <div class="desc">Upcoming and past editions across every county will list here as more phases launch. Kiambu — Banana Smash S04 is the first live entry.</div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="org">BARENA — Global Tournament Management Platform</div>
+    Kiambu County · Phase 01 · Live Now<br>
+    Let's Play. Let's Green. Let's Grow. 🍃
+  </footer>
+
+</body>
+</html>
