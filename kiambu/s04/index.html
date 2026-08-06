@@ -302,7 +302,7 @@
         .select('payment_status, category_id, players(full_name, club, global_rating, institution_id), categories(name)')
         .in('category_id', Object.values(CATEGORY_IDS))
         .eq('payment_status', 'confirmed')
-        .order('created_at', { ascending: false });
+        .order('registered_at', { ascending: false });
 
       const container = document.getElementById('confirmed-list');
       if (error || !data || data.length === 0){
@@ -397,7 +397,7 @@
           .select('id, payment_status, category_id, player_id')
           .in('player_id', playerIds)
           .in('category_id', Object.values(CATEGORY_IDS))
-          .order('created_at', { ascending: false });
+          .order('registered_at', { ascending: false });
 
         if (!entries || entries.length === 0) {
           lookupMsg.textContent = "No tournament entry found for that number.";
