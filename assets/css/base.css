@@ -71,6 +71,107 @@ body.kitta-page > * {
   z-index: 1;
 }
 
+/* ---- app preview modal (every page) ---- */
+.app-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.app-modal-overlay.open { display: flex; }
+.app-modal {
+  background: rgba(13,17,23,0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+.app-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+}
+.app-modal h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.app-modal .sub {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  margin-bottom: 20px;
+}
+.app-slider {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+  aspect-ratio: 9/16;
+  max-height: 420px;
+}
+.app-slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+.app-slide.active { display: block; }
+.app-slide img { width: 100%; height: 100%; object-fit: cover; }
+.app-slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(13,17,23,0.6);
+  border: 1px solid var(--line);
+  color: #fff;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-slider-prev { left: 10px; }
+.app-slider-next { right: 10px; }
+.app-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.app-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(245,247,250,0.25);
+  transition: background 0.2s, width 0.2s;
+}
+.app-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+.app-modal-cta {
+  background: rgba(255,106,61,0.1);
+  border: 1px solid rgba(255,106,61,0.25);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* ---- nav (every page) ---- */
   nav{
     display:flex; align-items:center; justify-content:space-between;

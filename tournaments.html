@@ -22,7 +22,7 @@
     <a href="gallery.html">Gallery</a>
     <a href="about.html">About</a>
   </div>
-  <a class="nav-cta" href="kiambu/s04/">Register</a>
+  <button class="nav-cta" onclick="document.getElementById('appModal').classList.add('open')" style="border:none; cursor:pointer; font-family:inherit;">Register</button>
 </nav>
 
 <div class="page-hero">
@@ -255,5 +255,57 @@
 
   loadTournaments();
 </script>
+
+<div class="app-modal-overlay" id="appModal">
+  <div class="app-modal">
+    <button class="app-modal-close" onclick="document.getElementById('appModal').classList.remove('open')">✕</button>
+    <h2>Get the <span style="color:var(--accent)">BArena</span> App</h2>
+    <p class="sub">Every sport. Every tournament. Everywhere.</p>
+
+    <div class="app-slider" id="appSlider">
+      <div class="app-slide active"><img src="assets/images/app-screens/app-01.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-02.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-03.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-04.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-05.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-06.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-07.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-08.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-09.png" alt="BArena app preview"/></div>
+      <div class="app-slide"><img src="assets/images/app-screens/app-10.png" alt="BArena app preview"/></div>
+      <button class="app-slider-nav app-slider-prev" onclick="appSlide(-1)">‹</button>
+      <button class="app-slider-nav app-slider-next" onclick="appSlide(1)">›</button>
+    </div>
+
+    <div class="app-dots" id="appDots"></div>
+
+    <div class="app-modal-cta">📱 Download link coming soon</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  let appCurrent = 0;
+  const appSlides = document.querySelectorAll('#appSlider .app-slide');
+  const appDotsEl = document.getElementById('appDots');
+  appSlides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'app-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => appGoTo(i);
+    appDotsEl.appendChild(dot);
+  });
+  window.appSlide = function(dir) {
+    appGoTo((appCurrent + dir + appSlides.length) % appSlides.length);
+  };
+  function appGoTo(i) {
+    appSlides[appCurrent].classList.remove('active');
+    appDotsEl.children[appCurrent].classList.remove('active');
+    appCurrent = i;
+    appSlides[appCurrent].classList.add('active');
+    appDotsEl.children[appCurrent].classList.add('active');
+  }
+})();
+</script>
+
 </body>
 </html>
