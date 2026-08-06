@@ -53,9 +53,9 @@ body.kitta-page::before {
   z-index: 0;
   background:
     linear-gradient(to bottom,
-      rgba(13,17,23,0.72) 0%,
-      rgba(13,17,23,0.85) 50%,
-      rgba(13,17,23,0.96) 100%
+      rgba(13,17,23,0.55) 0%,
+      rgba(13,17,23,0.72) 50%,
+      rgba(13,17,23,0.94) 100%
     ),
     url('../images/hero.jpg') center center / cover no-repeat;
   pointer-events: none;
