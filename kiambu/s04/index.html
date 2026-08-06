@@ -21,6 +21,21 @@
 .toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;}
 .toast{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:10px 20px;font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .3s ease forwards;white-space:nowrap;}
 .toast.out{animation:toastOut .4s ease forwards;}
+
+.pay-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:20px;}
+.pay-card h3{font-family:var(--font-display);font-size:20px;text-transform:uppercase;margin-bottom:6px;}
+.pay-card p{color:var(--text-dim);font-size:13.5px;margin-bottom:16px;}
+.pay-card label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
+.pay-card input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:14px;}
+.pay-card input:focus{outline:none;border-color:var(--accent2);}
+.pay-card button{width:100%;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:14.5px;padding:14px;border:none;border-radius:8px;cursor:pointer;}
+.pay-card button:disabled{opacity:.5;cursor:not-allowed;}
+.pay-msg{margin-top:12px;font-size:13px;text-align:center;}
+.pay-msg.ok{color:var(--accent2);}
+.pay-msg.err{color:#ff6a6a;}
+
+.pay-reminder{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0d0d0d;padding:14px 20px;border-radius:12px;font-weight:700;font-size:13.5px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:500;animation:reminderBlink 1.5s infinite;}
+@keyframes reminderBlink{0%,100%{opacity:1;}50%{opacity:0.6;}}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 @keyframes toastOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-10px);}}
 </style>
@@ -140,6 +155,15 @@
           <button type="submit" id="reg-submit">Register Now</button>
           <div class="reg-msg" id="reg-msg"></div>
         </form>
+
+        <div class="pay-card" id="pay-card" style="display:none;">
+          <h3>💳 Complete Payment</h3>
+          <p>An M-Pesa prompt will be sent to the number below. If someone else is paying for you, change the number.</p>
+          <label for="pay-phone">M-Pesa Number</label>
+          <input type="tel" id="pay-phone" placeholder="e.g. 0712345678">
+          <button type="button" id="pay-now-btn">Pay Now</button>
+          <div class="pay-msg" id="pay-msg"></div>
+        </div>
       </div>
     </section>
 
