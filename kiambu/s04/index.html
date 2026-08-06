@@ -34,6 +34,13 @@
 .pay-msg.ok{color:var(--accent2);}
 .pay-msg.err{color:#ff6a6a;}
 
+.lookup-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
+.lookup-block h3{font-family:var(--font-display);font-size:20px;text-transform:uppercase;margin-bottom:6px;}
+.lookup-block p{color:var(--text-dim);font-size:13.5px;margin-bottom:16px;}
+.lookup-block input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:14px;}
+.lookup-block input:focus{outline:none;border-color:var(--accent2);}
+.lookup-block button{width:100%;background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14.5px;padding:14px;border-radius:8px;cursor:pointer;}
+
 .pay-reminder{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0d0d0d;padding:14px 20px;border-radius:12px;font-weight:700;font-size:13.5px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:500;animation:reminderBlink 1.5s infinite;}
 @keyframes reminderBlink{0%,100%{opacity:1;}50%{opacity:0.6;}}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
@@ -128,6 +135,14 @@
         <div id="confirmed-list" class="confirmed-list">
           <div class="confirmed-empty">No confirmed players yet — be the first!</div>
         </div>
+      </div>
+
+      <div class="lookup-block">
+        <h3>Already Registered?</h3>
+        <p>Enter the phone number you registered with to complete payment.</p>
+        <input type="tel" id="lookup-phone" placeholder="e.g. 0712345678">
+        <button type="button" id="lookup-btn">Find My Registration</button>
+        <div class="pay-msg" id="lookup-msg"></div>
       </div>
 
       <div class="register-block">
@@ -239,20 +254,38 @@
         if (playerErr) throw playerErr;
 
         // 2. Enter them into the chosen category
-        const { error: entryErr } = await sb
+        const { data: entry, error: entryErr } = await sb
           .from('category_entries')
           .insert({
             category_id,
             player_id: player.id,
             payment_status: mpesa_code ? 'pending' : 'pending',
             mpesa_code: mpesa_code || null
-          });
+          })
+          .select('id')
+          .single();
         if (entryErr) throw entryErr;
 
-        msg.textContent = "✅ You're registered! We'll confirm your entry once payment is verified.";
+        msg.textContent = "✅ You're registered! Complete payment below to confirm your spot.";
         msg.classList.add('ok');
-        form.reset();
         refreshCounts();
+
+        // Show the Pay Now card, pre-filled with the phone they just registered with
+        document.getElementById('pay-phone').value = phone;
+        document.getElementById('pay-card').style.display = 'block';
+        document.getElementById('pay-card').dataset.entryId = entry.id;
+        document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Remember this registration locally so a return visit can pick up where they left off
+        localStorage.setItem('barena_pending_entry', JSON.stringify({
+          entry_id: entry.id,
+          phone: phone,
+          full_name: full_name,
+          category_id: category_id,
+          registered_at: Date.now()
+        }));
+
+        form.reset();
       } catch(err){
         console.error(err);
         msg.textContent = "Something went wrong — please try again or contact the organizers.";
@@ -327,6 +360,181 @@
       const total = parseInt(document.getElementById('count-total').textContent) || 0;
       checkMilestones(total);
     }
+
+    // ---- LOOKUP EXISTING REGISTRATION ----
+    document.getElementById('lookup-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('lookup-btn');
+      const lookupMsg = document.getElementById('lookup-msg');
+      const phone = document.getElementById('lookup-phone').value.trim();
+
+      if (!phone) {
+        lookupMsg.textContent = "Enter your phone number first.";
+        lookupMsg.className = "pay-msg err";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Searching…";
+      lookupMsg.textContent = "";
+      lookupMsg.className = "pay-msg";
+
+      try {
+        const { data: player } = await sb
+          .from('players')
+          .select('id, full_name')
+          .eq('phone', phone)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!player) {
+          lookupMsg.textContent = "No registration found with that number.";
+          lookupMsg.className = "pay-msg err";
+          return;
+        }
+
+        const { data: entry } = await sb
+          .from('category_entries')
+          .select('id, payment_status, category_id')
+          .eq('player_id', player.id)
+          .in('category_id', Object.values(CATEGORY_IDS))
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!entry) {
+          lookupMsg.textContent = "No tournament entry found for that number.";
+          lookupMsg.className = "pay-msg err";
+          return;
+        }
+
+        if (entry.payment_status === 'confirmed') {
+          lookupMsg.textContent = `✅ ${player.full_name.split(' ')[0]}, your entry is already confirmed!`;
+          lookupMsg.classList.add('ok');
+          return;
+        }
+
+        // Found a pending entry — show the pay card
+        lookupMsg.textContent = `Found it! Complete payment for ${player.full_name.split(' ')[0]} below.`;
+        lookupMsg.classList.add('ok');
+        document.getElementById('pay-phone').value = phone;
+        document.getElementById('pay-card').style.display = 'block';
+        document.getElementById('pay-card').dataset.entryId = entry.id;
+        document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      } catch (err) {
+        console.error(err);
+        lookupMsg.textContent = "Something went wrong searching for your registration.";
+        lookupMsg.className = "pay-msg err";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Find My Registration";
+      }
+    });
+
+    // ---- PAY NOW ----
+    document.getElementById('pay-now-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('pay-now-btn');
+      const payMsg = document.getElementById('pay-msg');
+      const phone = document.getElementById('pay-phone').value.trim();
+      const entryId = document.getElementById('pay-card').dataset.entryId;
+      const categorySelect = document.getElementById('category');
+      const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+      const amount = selectedOption?.textContent.includes('100') ? 100 : 200;
+
+      if (!phone) {
+        payMsg.textContent = "Enter the M-Pesa number to pay from.";
+        payMsg.className = "pay-msg err";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Sending prompt…";
+      payMsg.textContent = "";
+      payMsg.className = "pay-msg";
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/initiate-stk-push`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, amount, entry_id: entryId })
+        });
+        const data = await res.json();
+
+        if (data.ResponseCode === "0") {
+          payMsg.textContent = "📲 Check your phone — enter your M-Pesa PIN to complete payment.";
+          payMsg.classList.add('ok');
+          startPaymentPolling(entryId);
+        } else {
+          payMsg.textContent = data.errorMessage || "Payment prompt failed — please try again.";
+          payMsg.classList.add('err');
+        }
+      } catch (err) {
+        console.error(err);
+        payMsg.textContent = "Something went wrong sending the payment prompt.";
+        payMsg.classList.add('err');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Pay Now";
+      }
+    });
+
+    // Poll every 4s to see if the callback confirmed payment
+    function startPaymentPolling(entryId) {
+      const interval = setInterval(async () => {
+        const { data } = await sb
+          .from('category_entries')
+          .select('payment_status')
+          .eq('id', entryId)
+          .single();
+
+        if (data?.payment_status === 'confirmed') {
+          clearInterval(interval);
+          document.getElementById('pay-msg').textContent = "✅ Payment confirmed! You're all set.";
+          document.getElementById('pay-card').style.display = 'none';
+          localStorage.removeItem('barena_pending_entry');
+          loadConfirmedPlayers();
+          refreshCounts();
+          hideReminder();
+        }
+      }, 4000);
+    }
+
+    // ---- REMEMBER ME / RETURN VISIT REMINDER ----
+    function checkPendingPayment() {
+      const saved = localStorage.getItem('barena_pending_entry');
+      if (!saved) return;
+
+      const pending = JSON.parse(saved);
+      // Expire after 48 hours so old entries don't nag forever
+      if (Date.now() - pending.registered_at > 48 * 60 * 60 * 1000) {
+        localStorage.removeItem('barena_pending_entry');
+        return;
+      }
+      showReminder(pending);
+    }
+
+    function showReminder(pending) {
+      if (document.getElementById('pay-reminder')) return;
+      const el = document.createElement('div');
+      el.id = 'pay-reminder';
+      el.className = 'pay-reminder';
+      el.textContent = `💰 Pay Now — ${pending.full_name.split(' ')[0]}'s spot is pending`;
+      el.addEventListener('click', () => {
+        document.getElementById('pay-phone').value = pending.phone;
+        document.getElementById('pay-card').style.display = 'block';
+        document.getElementById('pay-card').dataset.entryId = pending.entry_id;
+        document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      document.body.appendChild(el);
+    }
+
+    function hideReminder() {
+      const el = document.getElementById('pay-reminder');
+      if (el) el.remove();
+    }
+
+    checkPendingPayment();
 
     // ---- SHARE BUTTON ----
     document.getElementById('share-btn').addEventListener('click', async () => {
