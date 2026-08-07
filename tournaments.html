@@ -176,14 +176,18 @@
   }
 
   function cardHTML(e) {
+    const isPast = e.status === 'completed';
+    const isLive = e.status === 'ongoing';
     const statusClass = `status-${e.status}`;
-    const statusLabel = e.status === 'live' ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
+    const statusLabel = isLive ? 'Live' : e.status === 'upcoming' ? 'Upcoming' : 'Past';
     const dateStr = formatDate(e.start_date, e.end_date);
-    const ctaLabel = e.status === 'past' ? 'View Results' : 'Register';
-    const ctaClass = e.status === 'past' ? 'card-cta past' : 'card-cta';
-   const ctaHref = e.slug === 'banana-smash-s04' ? 'kiambu/s04/index.html'
-                  : e.slug?.startsWith('banana-smash') ? 'kiambu/index.html'
-                  : '#';
+    const ctaLabel = isPast ? 'View Results' : 'Register';
+    const ctaClass = isPast ? 'card-cta past' : 'card-cta';
+    const ctaHref = isPast
+      ? `kiambu/index.html#results-${e.slug || e.id}`
+      : (e.slug === 'banana-smash-s04' ? 'kiambu/s04/index.html'
+        : e.slug?.startsWith('banana-smash') ? 'kiambu/index.html'
+        : '#');
 
     return `
     <div class="t-card" onclick="window.location.href='${ctaHref}'">

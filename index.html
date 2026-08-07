@@ -174,14 +174,21 @@
         </div>
         <h2>Banana Smash S04</h2>
         <p class="tournament-desc">The flagship BARENA pilot. Table tennis at its finest, Aug 22–23, ACK Emanuel Church Karuri. Three categories, live bracket updates, real-time ELO tracking.</p>
+        <div class="mpesa-strip">
+          <div class="mpesa-badge"><span class="mpesa-logo">M-PESA</span> Buy Goods Till <span class="mpesa-till">1569597</span></div>
+          <div class="seat-badge">🎟️ Spectator / Attend Only <b>Ksh 50</b></div>
+        </div>
       </div>
       <div class="tournament-showcase">
         <div class="showcase-left">
-          <div class="countdown" id="countdown">
-            <div class="cd-item"><div class="cd-num" id="cd-days">–</div><div class="cd-lab">Days</div></div>
-            <div class="cd-item"><div class="cd-num" id="cd-hours">–</div><div class="cd-lab">Hrs</div></div>
-            <div class="cd-item"><div class="cd-num" id="cd-mins">–</div><div class="cd-lab">Min</div></div>
-            <div class="cd-item"><div class="cd-num" id="cd-secs">–</div><div class="cd-lab">Sec</div></div>
+          <div class="countdown-cool" id="countdown">
+            <div class="cd-cool-item"><span class="cd-cool-num" id="cd-days">–</span><span class="cd-cool-lab">Days</span></div>
+            <span class="cd-cool-sep">:</span>
+            <div class="cd-cool-item"><span class="cd-cool-num" id="cd-hours">–</span><span class="cd-cool-lab">Hrs</span></div>
+            <span class="cd-cool-sep">:</span>
+            <div class="cd-cool-item"><span class="cd-cool-num" id="cd-mins">–</span><span class="cd-cool-lab">Min</span></div>
+            <span class="cd-cool-sep">:</span>
+            <div class="cd-cool-item"><span class="cd-cool-num" id="cd-secs">–</span><span class="cd-cool-lab">Sec</span></div>
           </div>
           <div class="live-counter-large">
             <div class="counter-item">
@@ -448,7 +455,7 @@
       const el = document.getElementById('countdown');
       const now = new Date();
       if (now > EVENT_END) { el.innerHTML = '<div class="cd-live">Event has ended</div>'; return; }
-      if (now >= EVENT_START) { el.innerHTML = '<div class="cd-live">🔴 Live now</div>'; return; }
+      if (now >= EVENT_START) { el.innerHTML = '<div class="cd-live-badge"><span class="pulse-dot"></span>LIVE NOW</div>'; return; }
       const diff = EVENT_START - now;
       const days = Math.floor(diff / 86400000);
       const hours = Math.floor((diff % 86400000) / 3600000);
