@@ -9,42 +9,116 @@
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/kiambu.css">
 <style>
+/* ---------- Layout base ---------- */
+*{box-sizing:border-box;}
 .hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;}
-.glow-1{width:500px;height:500px;background:var(--accent);top:-100px;left:-100px;}
-.glow-2{width:400px;height:400px;background:var(--accent2);bottom:-80px;right:-80px;}
-.hero-inner{position:relative;z-index:1;padding:80px 24px 60px;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;}
-.live-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
+.glow-1{width:400px;height:400px;background:var(--accent);top:-100px;left:-100px;}
+.glow-2{width:320px;height:320px;background:var(--accent2);bottom:-80px;right:-80px;}
+.hero-inner{position:relative;z-index:1;padding:40px 24px 28px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.live-indicator{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
+.hero-title{font-family:var(--font-display);font-size:clamp(34px,8vw,58px);text-transform:uppercase;letter-spacing:.02em;line-height:1;margin-bottom:6px;}
+.hero-sub{font-size:clamp(13px,2vw,15px);color:var(--text-dim);}
+.hero-quickfacts{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-family:var(--font-mono);font-size:12.5px;color:var(--text-dim);}
+.hero-quickfacts b{color:var(--text);}
+
+/* ---------- Sticky Tabs ---------- */
+.tab-bar{position:sticky;top:0;z-index:100;display:flex;background:var(--bg);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);}
+.tab-btn{flex:1;padding:14px 8px;text-align:center;font-family:var(--font-display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim);background:none;border:none;cursor:pointer;position:relative;transition:color .15s;}
+.tab-btn.active{color:var(--accent);}
+.tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--accent);}
+.tab-badge{display:inline-block;margin-left:6px;background:var(--accent);color:#0d0d0d;font-size:10px;font-weight:800;border-radius:999px;padding:1px 6px;font-family:var(--font-mono);vertical-align:middle;}
+
+.tab-panel{display:none;padding:20px 20px 40px;max-width:640px;margin:0 auto;}
+.tab-panel.active{display:block;}
+
+/* ---------- Compact stat strip ---------- */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.stat-strip .cell{background:var(--surface);padding:12px 6px;text-align:center;}
+.stat-strip .num{font-family:var(--font-display);font-size:20px;color:var(--accent);line-height:1;}
+.stat-strip .lab{font-size:9.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;}
+
+/* ---------- Collapsible info ---------- */
+.info-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:var(--font-display);font-size:15px;text-transform:uppercase;letter-spacing:.03em;color:var(--text);margin-bottom:10px;}
+.info-toggle .chev{transition:transform .2s;color:var(--text-dim);}
+.info-toggle.open .chev{transform:rotate(180deg);}
+.info-body{display:none;padding:4px 4px 18px;}
+.info-body.open{display:block;}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
+.info-row:last-child{border-bottom:none;}
+.info-row .k{color:var(--text-dim);}
+.info-row .v{font-weight:700;}
+
+.cat-mini{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-size:13.5px;}
+.cat-mini .fee{font-family:var(--font-mono);color:var(--accent);font-weight:700;}
+
+/* ---------- Toast / confirmed list ---------- */
 .toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;}
 .toast{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:10px 20px;font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .3s ease forwards;white-space:nowrap;}
 .toast.out{animation:toastOut .4s ease forwards;}
-
-.pay-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:20px;}
-.pay-card h3{font-family:var(--font-display);font-size:20px;text-transform:uppercase;margin-bottom:6px;}
-.pay-card p{color:var(--text-dim);font-size:13.5px;margin-bottom:16px;}
-.pay-card label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
-.pay-card input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:14px;}
-.pay-card input:focus{outline:none;border-color:var(--accent2);}
-.pay-card button{width:100%;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:14.5px;padding:14px;border:none;border-radius:8px;cursor:pointer;}
-.pay-card button:disabled{opacity:.5;cursor:not-allowed;}
-.pay-msg{margin-top:12px;font-size:13px;text-align:center;}
-.pay-msg.ok{color:var(--accent2);}
-.pay-msg.err{color:#ff6a6a;}
-
-.lookup-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
-.lookup-block h3{font-family:var(--font-display);font-size:20px;text-transform:uppercase;margin-bottom:6px;}
-.lookup-block p{color:var(--text-dim);font-size:13.5px;margin-bottom:16px;}
-.lookup-block input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:14px;}
-.lookup-block input:focus{outline:none;border-color:var(--accent2);}
-.lookup-block button{width:100%;background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14.5px;padding:14px;border-radius:8px;cursor:pointer;}
-
-.pay-reminder{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0d0d0d;padding:14px 20px;border-radius:12px;font-weight:700;font-size:13.5px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:500;animation:reminderBlink 1.5s infinite;}
-@keyframes reminderBlink{0%,100%{opacity:1;}50%{opacity:0.6;}}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 @keyframes toastOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-10px);}}
+
+.confirmed-list-block{margin-bottom:20px;}
+.confirmed-list{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;}
+.confirmed-player{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.confirmed-player:last-child{border-bottom:none;}
+.cp-name{font-weight:700;}
+.cp-meta{color:var(--text-dim);font-size:11.5px;margin-top:2px;}
+.cp-rating{font-family:var(--font-mono);font-size:11px;color:var(--accent);}
+.confirmed-empty{padding:20px;text-align:center;color:var(--text-dim);font-size:13px;}
+
+/* ---------- Forms ---------- */
+.lookup-block,.register-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+.lookup-block h3,.register-block h3,.pay-card h3{font-family:var(--font-display);font-size:19px;text-transform:uppercase;margin-bottom:5px;}
+.lookup-block p,.register-block p,.pay-card p{color:var(--text-dim);font-size:13px;margin-bottom:14px;}
+input,select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:12px;}
+input:focus,select:focus{outline:none;border-color:var(--accent2);}
+label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:5px;}
+button.primary{width:100%;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:14px;padding:13px;border:none;border-radius:8px;cursor:pointer;}
+button.primary:disabled{opacity:.5;cursor:not-allowed;}
+button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px;padding:13px;border-radius:8px;cursor:pointer;}
+.pay-msg{margin-top:10px;font-size:13px;text-align:center;}
+.pay-msg.ok{color:var(--accent2);}
+.pay-msg.err{color:#ff6a6a;}
+.pay-card{background:var(--bg);border:1px dashed var(--accent);border-radius:14px;padding:20px;margin-top:16px;}
+
+/* ---------- Entry type toggle ---------- */
+.entry-toggle{display:flex;gap:8px;margin-bottom:16px;}
+.entry-toggle button{flex:1;padding:12px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-dim);font-weight:700;font-size:12.5px;cursor:pointer;text-align:center;}
+.entry-toggle button.active{border-color:var(--accent);color:var(--accent);background:rgba(255,106,61,0.08);}
+.entry-toggle .price{display:block;font-family:var(--font-mono);font-size:11px;margin-top:2px;opacity:.8;}
+
+/* ---------- My Spot tab ---------- */
+.myspot-empty{text-align:center;padding:60px 20px;color:var(--text-dim);}
+.myspot-empty .icon{font-size:40px;margin-bottom:12px;}
+.myspot-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center;}
+.myspot-card .status-pill{display:inline-block;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;}
+.status-pending{background:rgba(255,193,7,0.15);color:#ffc107;}
+.status-confirmed{background:rgba(16,185,129,0.15);color:#10b981;}
+.myspot-card .name{font-family:var(--font-display);font-size:24px;text-transform:uppercase;}
+.myspot-card .cat{color:var(--text-dim);font-size:13.5px;margin:4px 0 18px;}
+
+/* ---------- Ticket Modal ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;}
+.modal-overlay.open{display:flex;}
+.ticket{background:var(--surface);border:1px solid var(--border);border-radius:18px;max-width:360px;width:100%;overflow:hidden;position:relative;animation:ticketPop .3s ease;}
+@keyframes ticketPop{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.ticket-top{background:var(--accent);color:#0d0d0d;padding:22px;text-align:center;}
+.ticket-top .big-check{font-size:38px;margin-bottom:6px;}
+.ticket-top h2{font-family:var(--font-display);font-size:22px;text-transform:uppercase;}
+.ticket-body{padding:20px 22px;}
+.ticket-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
+.ticket-row:last-child{border-bottom:none;}
+.ticket-row .k{color:var(--text-dim);}
+.ticket-row .v{font-weight:700;}
+.ticket-footer{padding:16px 22px 22px;}
+.modal-close-btn{position:absolute;top:12px;right:14px;background:rgba(0,0,0,0.15);border:none;color:#0d0d0d;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;}
+
+.pay-reminder{position:fixed;bottom:20px;right:16px;left:16px;max-width:340px;margin:0 auto;background:var(--accent);color:#0d0d0d;padding:13px 18px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:500;text-align:center;}
 </style>
 </head>
 <body>
@@ -59,103 +133,102 @@
       <a href="../../gallery.html">Gallery</a>
       <a href="../../about.html">About</a>
     </div>
-    <a class="nav-cta" href="#register">Register</a>
+    <a class="nav-cta" href="#" onclick="switchTab('register');return false;">Register</a>
   </nav>
 
-  <header class="hero" style="min-height:60vh; position:relative; overflow:hidden;">
-    <div class="hero-bg">
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
-    </div>
+  <header class="hero" style="position:relative; overflow:hidden;">
+    <div class="hero-bg"><div class="glow glow-1"></div><div class="glow glow-2"></div></div>
     <div class="hero-inner">
-      <div class="hero-badge">
-        <span class="live-indicator"></span>
-        Phase 01 — Kiambu Edition Live
-      </div>
-      <div class="title">
-        <span class="l1" style="font-family:var(--font-display); font-size:clamp(44px,10vw,88px); text-transform:uppercase; letter-spacing:.02em;">Banana Smash</span>
-        <span class="l2" style="display:block; font-size:clamp(14px,2.5vw,20px); color:var(--text-dim); margin-top:10px;">Season 04 — Kiambu County · Aug 22–23, 2026</span>
-      </div>
-      <p class="lead" style="color:var(--text-dim); font-size:16px; margin-top:16px; max-width:500px;">Two days, three categories, real cash prizes on the line. Book your spot below.</p>
-      <div class="hero-ctas" style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
-        <a class="btn btn-primary" href="#register">Register Now →</a>
-        <a class="btn btn-ghost" href="../../index.html">← Back to BARENA</a>
+      <div class="hero-badge"><span class="live-indicator"></span> Phase 01 — Kiambu Edition Live</div>
+      <div class="hero-title">Banana Smash</div>
+      <div class="hero-sub">Season 04 · Kiambu County · Aug 22–23, 2026</div>
+      <div class="hero-quickfacts">
+        <span>📅 <b>Aug 22–23</b></span>
+        <span>🕐 <b>1:00–7:00pm</b></span>
+        <span>📍 <b>ACK Emanuel, Karuri</b></span>
       </div>
     </div>
   </header>
 
-  <div class="wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-btn-overview" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" id="tab-btn-register" onclick="switchTab('register')">Register</button>
+    <button class="tab-btn" id="tab-btn-myspot" onclick="switchTab('myspot')">My Spot</button>
+  </div>
 
-    <div class="info-grid">
-      <div class="cell"><div class="k">Dates</div><div class="v">Aug 22–23<small>Sat &amp; Sun</small></div></div>
-      <div class="cell"><div class="k">Time</div><div class="v">1:00–7:00<small>Both days</small></div></div>
-      <div class="cell"><div class="k">Venue</div><div class="v">ACK Emanuel<small>Church Karuri</small></div></div>
+  <!-- ================= OVERVIEW TAB ================= -->
+  <div class="tab-panel active" id="panel-overview">
+
+    <div class="stat-strip">
+      <div class="cell"><div class="num" id="count-total">–</div><div class="lab">Total</div></div>
+      <div class="cell"><div class="num" id="count-junior">–</div><div class="lab">Juniors</div></div>
+      <div class="cell"><div class="num" id="count-men">–</div><div class="lab">Men</div></div>
+      <div class="cell"><div class="num" id="count-ladies">–</div><div class="lab">Ladies</div></div>
+      <div class="cell"><div class="num" id="count-seats">–</div><div class="lab">Seats</div></div>
     </div>
 
-    <section>
-      <div class="section-head">
-        <div class="section-kicker">Categories &amp; Fees</div>
-        <div class="section-title">Pick Your Category</div>
-      </div>
-      <div class="cats">
-        <div class="cat"><div class="name">Juniors</div><div class="fee">100<sup>/player</sup></div></div>
-        <div class="cat"><div class="name">Seniors — Men</div><div class="fee">200<sup>/player</sup></div></div>
-        <div class="cat"><div class="name">Seniors — Ladies</div><div class="fee">200<sup>/player</sup></div></div>
-      </div>
-    </section>
+    <button class="info-toggle" id="toggle-cats" onclick="toggleInfo('cats')">
+      <span>🏓 Categories &amp; Fees</span><span class="chev">▾</span>
+    </button>
+    <div class="info-body" id="body-cats">
+      <div class="cat-mini"><span>Juniors</span><span class="fee">Ksh 100</span></div>
+      <div class="cat-mini"><span>Seniors — Men</span><span class="fee">Ksh 200</span></div>
+      <div class="cat-mini"><span>Seniors — Ladies</span><span class="fee">Ksh 200</span></div>
+      <div class="cat-mini"><span>🎟️ Just Watching</span><span class="fee">Ksh 50</span></div>
+    </div>
 
-    <section>
-      <div class="section-head">
-        <div class="section-kicker">Prizes</div>
-        <div class="section-title">Cash Prizes — Top 3</div>
-      </div>
-      <div class="prize-card">
-        <div class="medal">🏆</div>
-        <div>
-          <p><strong>Cash prizes for 1st, 2nd &amp; 3rd place</strong> in every category — Juniors, Senior Men, Senior Ladies.</p>
-          <div class="foot">Final prize amounts are announced on the day and grow with every player who registers — the earlier you sign up, the bigger the pot.</div>
-        </div>
-      </div>
-    </section>
+    <button class="info-toggle" id="toggle-prizes" onclick="toggleInfo('prizes')">
+      <span>🏆 Prizes</span><span class="chev">▾</span>
+    </button>
+    <div class="info-body" id="body-prizes">
+      <p style="color:var(--text-dim);font-size:13px;line-height:1.5;">Cash prizes for 1st, 2nd &amp; 3rd place in every category. Final amounts are announced on the day and grow with every player who registers.</p>
+    </div>
 
-    <section id="register">
-      <div class="section-head">
-        <div class="section-kicker">Live Now</div>
-        <div class="section-title">Registration Status</div>
-      </div>
-      <div class="live-counter" id="live-counter">
-        <div class="cell"><div class="num" id="count-total">–</div><div class="lab">Total Registered</div></div>
-        <div class="cell"><div class="num" id="count-junior">–</div><div class="lab">Juniors</div></div>
-        <div class="cell"><div class="num" id="count-men">–</div><div class="lab">Senior Men</div></div>
-        <div class="cell"><div class="num" id="count-ladies">–</div><div class="lab">Senior Ladies</div></div>
-      </div>
-
-      <div class="confirmed-list-block">
-        <div class="section-kicker" style="margin-bottom:12px;">✅ Confirmed Players</div>
+    <div class="confirmed-list-block" style="margin-top:20px;">
+      <button class="info-toggle open" id="toggle-confirmed" onclick="toggleInfo('confirmed')">
+        <span>✅ Confirmed Players</span><span class="chev">▾</span>
+      </button>
+      <div class="info-body open" id="body-confirmed">
         <div id="confirmed-list" class="confirmed-list">
           <div class="confirmed-empty">No confirmed players yet — be the first!</div>
         </div>
       </div>
+    </div>
 
-      <div class="lookup-block">
-        <h3>Already Registered?</h3>
-        <p>Enter the phone number you registered with to complete payment.</p>
-        <input type="tel" id="lookup-phone" placeholder="e.g. 0712345678">
-        <button type="button" id="lookup-btn">Find My Registration</button>
-        <div class="pay-msg" id="lookup-msg"></div>
+  </div>
+
+  <!-- ================= REGISTER TAB ================= -->
+  <div class="tab-panel" id="panel-register">
+
+    <div class="lookup-block">
+      <h3>Already Registered?</h3>
+      <p>Enter the phone number you used to complete payment.</p>
+      <input type="tel" id="lookup-phone" placeholder="e.g. 0712345678">
+      <button type="button" class="ghost" id="lookup-btn">Find My Registration</button>
+      <div class="pay-msg" id="lookup-msg"></div>
+    </div>
+
+    <div class="register-block">
+      <h3>Reserve Your Spot</h3>
+      <p>Choose how you'd like to join — your entry is confirmed once payment is verified.</p>
+
+      <div class="entry-toggle">
+        <button type="button" id="entry-compete" class="active" onclick="setEntryType('compete')">
+          🏓 Compete<span class="price">from Ksh 100</span>
+        </button>
+        <button type="button" id="entry-watch" onclick="setEntryType('watch')">
+          🎟️ Just Watching<span class="price">Ksh 50</span>
+        </button>
       </div>
 
-      <div class="register-block">
-        <h3>Reserve Your Spot</h3>
-        <p>Fill in your details below — your entry is confirmed once payment is verified.</p>
+      <form class="reg-form" id="reg-form">
+        <label for="full_name">Full Name</label>
+        <input type="text" id="full_name" required placeholder="e.g. Jane Wanjiru">
 
-        <form class="reg-form" id="reg-form">
-          <label for="full_name">Full Name</label>
-          <input type="text" id="full_name" required placeholder="e.g. Jane Wanjiru">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" required placeholder="e.g. 0712345678">
 
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" required placeholder="e.g. 0712345678">
-
+        <div id="category-field">
           <label for="category">Category</label>
           <select id="category" required>
             <option value="">Select a category</option>
@@ -163,35 +236,66 @@
             <option value="6b34289d-b1e9-4700-bb39-fc109573147b">Senior Men — Ksh 200</option>
             <option value="9bc6d79a-f673-46e0-930c-484c0bb0d974">Senior Ladies — Ksh 200</option>
           </select>
-
-          <label for="mpesa_code">M-Pesa Code (optional — add now or pay at the venue)</label>
-          <input type="text" id="mpesa_code" placeholder="e.g. QFT7X8Y2ZP">
-
-          <button type="submit" id="reg-submit">Register Now</button>
-          <div class="reg-msg" id="reg-msg"></div>
-        </form>
-
-        <div class="pay-card" id="pay-card" style="display:none;">
-          <h3>💳 Complete Payment</h3>
-          <p>An M-Pesa prompt will be sent to the number below. If someone else is paying for you, change the number.</p>
-          <label for="pay-phone">M-Pesa Number</label>
-          <input type="tel" id="pay-phone" placeholder="e.g. 0712345678">
-          <button type="button" id="pay-now-btn">Pay Now</button>
-          <div class="pay-msg" id="pay-msg"></div>
         </div>
+
+        <label for="mpesa_code">M-Pesa Code (optional — add now or pay at the venue)</label>
+        <input type="text" id="mpesa_code" placeholder="e.g. QFT7X8Y2ZP">
+
+        <button type="submit" class="primary" id="reg-submit">Register Now</button>
+        <div class="pay-msg" id="reg-msg"></div>
+      </form>
+
+      <div class="pay-card" id="pay-card" style="display:none;">
+        <h3>💳 Complete Payment</h3>
+        <p>An M-Pesa prompt will be sent to the number below.</p>
+        <label for="pay-phone">M-Pesa Number</label>
+        <input type="tel" id="pay-phone" placeholder="e.g. 0712345678">
+        <button type="button" class="primary" id="pay-now-btn">Pay Now</button>
+        <div class="pay-msg" id="pay-msg"></div>
       </div>
-    </section>
+    </div>
 
   </div>
 
- <footer>
+  <!-- ================= MY SPOT TAB ================= -->
+  <div class="tab-panel" id="panel-myspot">
+    <div id="myspot-content">
+      <div class="myspot-empty">
+        <div class="icon">🎫</div>
+        <p>No active registration found on this device.<br>Register in the "Register" tab, or use "Find My Registration" if you've already signed up.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
     <div class="org">BARENA — Kiambu County · Phase 01</div>
     Hosted with ACK Emanuel Church Karuri, Diocese of Mount Kenya South
     <div style="margin-top:16px;">
       <button class="btn btn-ghost" id="share-btn" style="font-size:13px;">🔗 Share This Tournament</button>
     </div>
   </footer>
+
   <div class="toast-container" id="toast-container"></div>
+
+  <!-- Ticket confirmation modal -->
+  <div class="modal-overlay" id="ticket-modal">
+    <div class="ticket">
+      <button class="modal-close-btn" onclick="closeTicketModal()">✕</button>
+      <div class="ticket-top">
+        <div class="big-check">🎉</div>
+        <h2>You're In!</h2>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-row"><span class="k">Name</span><span class="v" id="ticket-name">—</span></div>
+        <div class="ticket-row"><span class="k">Entry</span><span class="v" id="ticket-category">—</span></div>
+        <div class="ticket-row"><span class="k">Amount Due</span><span class="v" id="ticket-amount">—</span></div>
+        <div class="ticket-row"><span class="k">Your Number</span><span class="v" id="ticket-number">—</span></div>
+      </div>
+      <div class="ticket-footer">
+        <button class="primary" onclick="closeTicketModal();switchTab('register');document.getElementById('pay-card').scrollIntoView({behavior:'smooth'});">Pay Now →</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -204,8 +308,34 @@
       men: "6b34289d-b1e9-4700-bb39-fc109573147b",
       ladies: "9bc6d79a-f673-46e0-930c-484c0bb0d974"
     };
+    const SEAT_PRICE = 50;
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ---- TABS ----
+    function switchTab(name){
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      document.getElementById('tab-btn-' + name).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- COLLAPSIBLES ----
+    function toggleInfo(key){
+      document.getElementById('toggle-' + key).classList.toggle('open');
+      document.getElementById('body-' + key).classList.toggle('open');
+    }
+
+    // ---- ENTRY TYPE TOGGLE ----
+    let entryType = 'compete'; // 'compete' | 'watch'
+    function setEntryType(type){
+      entryType = type;
+      document.getElementById('entry-compete').classList.toggle('active', type === 'compete');
+      document.getElementById('entry-watch').classList.toggle('active', type === 'watch');
+      document.getElementById('category-field').style.display = type === 'compete' ? 'block' : 'none';
+      document.getElementById('category').required = (type === 'compete');
+    }
 
     // ---- LIVE COUNTER ----
     async function refreshCounts(){
@@ -213,21 +343,25 @@
       const { count: junior } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.junior);
       const { count: men } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.men);
       const { count: ladies } = await sb.from('category_entries').select('*', { count: 'exact', head: true }).eq('category_id', CATEGORY_IDS.ladies);
+      const { count: seats } = await sb.from('seat_bookings').select('*', { count: 'exact', head: true }).eq('tournament_id', TOURNAMENT_ID);
 
       document.getElementById('count-total').textContent = total ?? 0;
       document.getElementById('count-junior').textContent = junior ?? 0;
       document.getElementById('count-men').textContent = men ?? 0;
       document.getElementById('count-ladies').textContent = ladies ?? 0;
+      document.getElementById('count-seats').textContent = seats ?? 0;
     }
     refreshCounts();
     loadConfirmedPlayers();
 
-    // Live updates: refresh counts the moment any new entry is added, by anyone
     sb.channel('category_entries_changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => { refreshCountsWithMilestones(); loadConfirmedPlayers(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, () => { refreshCountsWithMilestones(); loadConfirmedPlayers(); })
+      .subscribe();
+    sb.channel('seat_bookings_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'seat_bookings' }, () => { refreshCounts(); })
       .subscribe();
 
-    // ---- REGISTRATION SUBMIT ----
+    // ---- REGISTRATION SUBMIT (handles both compete + watch) ----
     const form = document.getElementById('reg-form');
     const msg = document.getElementById('reg-msg');
     const submitBtn = document.getElementById('reg-submit');
@@ -237,55 +371,71 @@
       submitBtn.disabled = true;
       submitBtn.textContent = "Registering…";
       msg.textContent = "";
-      msg.className = "reg-msg";
+      msg.className = "pay-msg";
 
       const full_name = document.getElementById('full_name').value.trim();
       const phone = document.getElementById('phone').value.trim();
-      const category_id = document.getElementById('category').value;
       const mpesa_code = document.getElementById('mpesa_code').value.trim();
 
       try{
-        // 1. Create the player
-        const { data: player, error: playerErr } = await sb
-          .from('players')
-          .insert({ full_name, phone })
-          .select('id')
-          .single();
-        if (playerErr) throw playerErr;
+        let entryId, amount, categoryLabel, entryTable;
 
-        // 2. Enter them into the chosen category
-        const { data: entry, error: entryErr } = await sb
-          .from('category_entries')
-          .insert({
-            category_id,
-            player_id: player.id,
-            payment_status: mpesa_code ? 'pending' : 'pending',
-            mpesa_code: mpesa_code || null
-          })
-          .select('id')
-          .single();
-        if (entryErr) throw entryErr;
+        if (entryType === 'compete') {
+          const category_id = document.getElementById('category').value;
+          const catName = document.getElementById('category').selectedOptions[0]?.text || '';
+          amount = category_id === CATEGORY_IDS.junior ? 100 : 200;
+          categoryLabel = catName.split(' — ')[0];
+          entryTable = 'category_entries';
+
+          const { data: player, error: playerErr } = await sb.from('players').insert({ full_name, phone }).select('id').single();
+          if (playerErr) throw playerErr;
+
+          const { data: entry, error: entryErr } = await sb
+            .from('category_entries')
+            .insert({ category_id, player_id: player.id, payment_status: 'pending', mpesa_code: mpesa_code || null })
+            .select('id')
+            .single();
+          if (entryErr) throw entryErr;
+          entryId = entry.id;
+
+        } else {
+          amount = SEAT_PRICE;
+          categoryLabel = 'Spectator Seat';
+          entryTable = 'seat_bookings';
+
+          const { data: seat, error: seatErr } = await sb
+            .from('seat_bookings')
+            .insert({ tournament_id: TOURNAMENT_ID, full_name, phone, payment_status: 'pending', mpesa_code: mpesa_code || null })
+            .select('id')
+            .single();
+          if (seatErr) throw seatErr;
+          entryId = seat.id;
+        }
+
+        // Get this person's position in line (for the ticket number)
+        const { count: position } = await sb.from(entryTable).select('*', { count: 'exact', head: true });
 
         msg.textContent = "✅ You're registered! Complete payment below to confirm your spot.";
         msg.classList.add('ok');
         refreshCounts();
+        loadConfirmedPlayers();
 
-        // Show the Pay Now card, pre-filled with the phone they just registered with
         document.getElementById('pay-phone').value = phone;
         document.getElementById('pay-card').style.display = 'block';
-        document.getElementById('pay-card').dataset.entryId = entry.id;
-        document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('pay-card').dataset.entryId = entryId;
+        document.getElementById('pay-card').dataset.entryTable = entryTable;
+        document.getElementById('pay-card').dataset.amount = amount;
 
-        // Remember this registration locally so a return visit can pick up where they left off
         localStorage.setItem('barena_pending_entry', JSON.stringify({
-          entry_id: entry.id,
-          phone: phone,
-          full_name: full_name,
-          category_id: category_id,
-          registered_at: Date.now()
+          entry_id: entryId, entry_table: entryTable, phone, full_name,
+          category_label: categoryLabel, amount, registered_at: Date.now()
         }));
 
+        showTicketModal({ full_name, categoryLabel, amount, position: position ?? '—' });
+        renderMySpot();
         form.reset();
+        setEntryType('compete');
+
       } catch(err){
         console.error(err);
         msg.textContent = "Something went wrong — please try again or contact the organizers.";
@@ -296,6 +446,22 @@
       }
     });
 
+    // ---- TICKET MODAL ----
+    function showTicketModal({ full_name, categoryLabel, amount, position }){
+      document.getElementById('ticket-name').textContent = full_name;
+      document.getElementById('ticket-category').textContent = categoryLabel;
+      document.getElementById('ticket-amount').textContent = `Ksh ${amount}`;
+      document.getElementById('ticket-number').textContent = `#${position}`;
+      document.getElementById('ticket-modal').classList.add('open');
+    }
+    function closeTicketModal(){
+      document.getElementById('ticket-modal').classList.remove('open');
+    }
+    document.getElementById('ticket-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'ticket-modal') closeTicketModal();
+    });
+
+    // ---- CONFIRMED PLAYERS ----
     async function loadConfirmedPlayers(){
       const { data, error } = await sb
         .from('category_entries')
@@ -316,44 +482,26 @@
         const club = p?.club || 'Independent';
         const rating = p?.global_rating ? `<span class="cp-rating">⭐ ${p.global_rating}</span>` : '';
         const cat = r.categories?.name || '';
-        return `
-          <div class="confirmed-player">
-            <div class="cp-left">
-              <div class="cp-name">${name}</div>
-              <div class="cp-meta">${club} · ${cat}</div>
-            </div>
-            <div class="cp-right">${rating}</div>
-          </div>`;
+        return `<div class="confirmed-player"><div><div class="cp-name">${name}</div><div class="cp-meta">${club} · ${cat}</div></div><div>${rating}</div></div>`;
       }).join('');
     }
 
-// ---- MILESTONE TOASTS ----
+    // ---- MILESTONE TOASTS ----
     const MILESTONES = [5, 10, 20, 30, 50, 100];
     let lastKnownTotal = null;
-
     function showToast(msg, duration = 4000) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.textContent = msg;
       container.appendChild(toast);
-      setTimeout(() => {
-        toast.classList.add('out');
-        setTimeout(() => toast.remove(), 400);
-      }, duration);
+      setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 400); }, duration);
     }
-
     function checkMilestones(newTotal) {
       if (lastKnownTotal === null) { lastKnownTotal = newTotal; return; }
-      MILESTONES.forEach(m => {
-        if (lastKnownTotal < m && newTotal >= m) {
-          showToast(`🔥 ${m} players registered! Spots filling fast.`);
-        }
-      });
+      MILESTONES.forEach(m => { if (lastKnownTotal < m && newTotal >= m) showToast(`🔥 ${m} players registered! Spots filling fast.`); });
       lastKnownTotal = newTotal;
     }
-
-    // Patch refreshCounts to also check milestones
     const _origRefresh = refreshCounts;
     async function refreshCountsWithMilestones() {
       await _origRefresh();
@@ -361,64 +509,67 @@
       checkMilestones(total);
     }
 
-// ---- LOOKUP EXISTING REGISTRATION ----
+    // ---- LOOKUP EXISTING REGISTRATION (checks both category_entries + seat_bookings) ----
     document.getElementById('lookup-btn').addEventListener('click', async () => {
       const btn = document.getElementById('lookup-btn');
       const lookupMsg = document.getElementById('lookup-msg');
       const phone = document.getElementById('lookup-phone').value.trim();
 
-      if (!phone) {
-        lookupMsg.textContent = "Enter your phone number first.";
-        lookupMsg.className = "pay-msg err";
-        return;
-      }
+      if (!phone) { lookupMsg.textContent = "Enter your phone number first."; lookupMsg.className = "pay-msg err"; return; }
 
-      btn.disabled = true;
-      btn.textContent = "Searching…";
-      lookupMsg.textContent = "";
-      lookupMsg.className = "pay-msg";
+      btn.disabled = true; btn.textContent = "Searching…"; lookupMsg.textContent = ""; lookupMsg.className = "pay-msg";
 
       try {
-        const { data: players } = await sb
-          .from('players')
-          .select('id, full_name')
-          .eq('phone', phone);
+        const { data: players } = await sb.from('players').select('id, full_name').eq('phone', phone);
 
-        if (!players || players.length === 0) {
+        let found = null, foundType = null;
+
+        if (players && players.length > 0) {
+          const playerIds = players.map(p => p.id);
+          const { data: entries } = await sb
+            .from('category_entries')
+            .select('id, payment_status, category_id, player_id')
+            .in('player_id', playerIds)
+            .in('category_id', Object.values(CATEGORY_IDS))
+            .order('registered_at', { ascending: false });
+
+          if (entries && entries.length > 0) {
+            found = entries[0];
+            found.full_name = players.find(p => p.id === found.player_id)?.full_name;
+            foundType = 'category_entries';
+          }
+        }
+
+        if (!found) {
+          const { data: seats } = await sb
+            .from('seat_bookings')
+            .select('id, payment_status, full_name')
+            .eq('phone', phone)
+            .order('registered_at', { ascending: false });
+          if (seats && seats.length > 0) { found = seats[0]; foundType = 'seat_bookings'; }
+        }
+
+        if (!found) {
           lookupMsg.textContent = "No registration found with that number.";
           lookupMsg.className = "pay-msg err";
           return;
         }
 
-        const playerIds = players.map(p => p.id);
-
-        const { data: entries } = await sb
-          .from('category_entries')
-          .select('id, payment_status, category_id, player_id')
-          .in('player_id', playerIds)
-          .in('category_id', Object.values(CATEGORY_IDS))
-          .order('registered_at', { ascending: false });
-
-        if (!entries || entries.length === 0) {
-          lookupMsg.textContent = "No tournament entry found for that number.";
-          lookupMsg.className = "pay-msg err";
-          return;
-        }
-
-        const entry = entries[0];
-        const player = players.find(p => p.id === entry.player_id);
-
-        if (entry.payment_status === 'confirmed') {
-          lookupMsg.textContent = `✅ ${player.full_name.split(' ')[0]}, your entry is already confirmed!`;
+        if (found.payment_status === 'confirmed') {
+          lookupMsg.textContent = `✅ ${found.full_name.split(' ')[0]}, your entry is already confirmed!`;
           lookupMsg.classList.add('ok');
           return;
         }
 
-        lookupMsg.textContent = `Found it! Complete payment for ${player.full_name.split(' ')[0]} below.`;
+        const amount = foundType === 'seat_bookings' ? SEAT_PRICE : (found.category_id === CATEGORY_IDS.junior ? 100 : 200);
+
+        lookupMsg.textContent = `Found it! Complete payment for ${found.full_name.split(' ')[0]} below.`;
         lookupMsg.classList.add('ok');
         document.getElementById('pay-phone').value = phone;
         document.getElementById('pay-card').style.display = 'block';
-        document.getElementById('pay-card').dataset.entryId = entry.id;
+        document.getElementById('pay-card').dataset.entryId = found.id;
+        document.getElementById('pay-card').dataset.entryTable = foundType;
+        document.getElementById('pay-card').dataset.amount = amount;
         document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       } catch (err) {
@@ -436,37 +587,30 @@
       const btn = document.getElementById('pay-now-btn');
       const payMsg = document.getElementById('pay-msg');
       const phone = document.getElementById('pay-phone').value.trim();
-      const entryId = document.getElementById('pay-card').dataset.entryId;
+      const card = document.getElementById('pay-card');
+      const entryId = card.dataset.entryId;
+      const entryTable = card.dataset.entryTable || 'category_entries';
+      let amount = parseInt(card.dataset.amount || '0', 10);
 
-      if (!phone) {
-        payMsg.textContent = "Enter the M-Pesa number to pay from.";
-        payMsg.className = "pay-msg err";
-        return;
-      }
+      if (!phone) { payMsg.textContent = "Enter the M-Pesa number to pay from."; payMsg.className = "pay-msg err"; return; }
 
-      btn.disabled = true;
-      btn.textContent = "Sending prompt…";
-      payMsg.textContent = "";
-      payMsg.className = "pay-msg";
+      btn.disabled = true; btn.textContent = "Sending prompt…"; payMsg.textContent = ""; payMsg.className = "pay-msg";
 
       try {
-        // Look up the entry's real category so the amount is always correct,
-        // regardless of whether the user just registered or came back via lookup.
-        const { data: entryRow, error: entryLookupErr } = await sb
-          .from('category_entries')
-          .select('category_id')
-          .eq('id', entryId)
-          .single();
-
-        if (entryLookupErr || !entryRow) {
-          payMsg.textContent = "Couldn't verify your registration — please refresh and try again.";
-          payMsg.classList.add('err');
-          btn.disabled = false;
-          btn.textContent = "Pay Now";
-          return;
+        if (!amount) {
+          if (entryTable === 'seat_bookings') {
+            amount = SEAT_PRICE;
+          } else {
+            const { data: entryRow, error: entryLookupErr } = await sb.from('category_entries').select('category_id').eq('id', entryId).single();
+            if (entryLookupErr || !entryRow) {
+              payMsg.textContent = "Couldn't verify your registration — please refresh and try again.";
+              payMsg.classList.add('err');
+              btn.disabled = false; btn.textContent = "Pay Now";
+              return;
+            }
+            amount = entryRow.category_id === CATEGORY_IDS.junior ? 100 : 200;
+          }
         }
-
-        const amount = entryRow.category_id === CATEGORY_IDS.junior ? 100 : 200;
 
         const res = await fetch(`${SUPABASE_URL}/functions/v1/initiate-stk-push`, {
           method: 'POST',
@@ -478,7 +622,7 @@
         if (data.ResponseCode === "0") {
           payMsg.textContent = "📲 Check your phone — enter your M-Pesa PIN to complete payment.";
           payMsg.classList.add('ok');
-          startPaymentPolling(entryId);
+          startPaymentPolling(entryId, entryTable);
         } else {
           payMsg.textContent = data.errorMessage || "Payment prompt failed — please try again.";
           payMsg.classList.add('err');
@@ -493,15 +637,9 @@
       }
     });
 
-    // Poll every 4s to see if the callback confirmed payment
-    function startPaymentPolling(entryId) {
+    function startPaymentPolling(entryId, entryTable) {
       const interval = setInterval(async () => {
-        const { data } = await sb
-          .from('category_entries')
-          .select('payment_status')
-          .eq('id', entryId)
-          .single();
-
+        const { data } = await sb.from(entryTable).select('payment_status').eq('id', entryId).single();
         if (data?.payment_status === 'confirmed') {
           clearInterval(interval);
           document.getElementById('pay-msg').textContent = "✅ Payment confirmed! You're all set.";
@@ -510,22 +648,39 @@
           loadConfirmedPlayers();
           refreshCounts();
           hideReminder();
+          renderMySpot();
         }
       }, 4000);
     }
 
-    // ---- REMEMBER ME / RETURN VISIT REMINDER ----
+    // ---- MY SPOT TAB ----
+    function renderMySpot(){
+      const saved = localStorage.getItem('barena_pending_entry');
+      const content = document.getElementById('myspot-content');
+      if (!saved) {
+        content.innerHTML = `<div class="myspot-empty"><div class="icon">🎫</div><p>No active registration found on this device.<br>Register in the "Register" tab, or use "Find My Registration" if you've already signed up.</p></div>`;
+        return;
+      }
+      const p = JSON.parse(saved);
+      content.innerHTML = `
+        <div class="myspot-card">
+          <span class="status-pill status-pending">Payment Pending</span>
+          <div class="name">${p.full_name}</div>
+          <div class="cat">${p.category_label} · Ksh ${p.amount}</div>
+          <button class="primary" onclick="switchTab('register');document.getElementById('pay-card').scrollIntoView({behavior:'smooth'});">Complete Payment</button>
+        </div>`;
+    }
+
     function checkPendingPayment() {
       const saved = localStorage.getItem('barena_pending_entry');
       if (!saved) return;
-
       const pending = JSON.parse(saved);
-      // Expire after 48 hours so old entries don't nag forever
       if (Date.now() - pending.registered_at > 48 * 60 * 60 * 1000) {
         localStorage.removeItem('barena_pending_entry');
         return;
       }
       showReminder(pending);
+      renderMySpot();
     }
 
     function showReminder(pending) {
@@ -535,20 +690,23 @@
       el.className = 'pay-reminder';
       el.textContent = `💰 Pay Now — ${pending.full_name.split(' ')[0]}'s spot is pending`;
       el.addEventListener('click', () => {
+        switchTab('register');
         document.getElementById('pay-phone').value = pending.phone;
         document.getElementById('pay-card').style.display = 'block';
         document.getElementById('pay-card').dataset.entryId = pending.entry_id;
+        document.getElementById('pay-card').dataset.entryTable = pending.entry_table;
+        document.getElementById('pay-card').dataset.amount = pending.amount;
         document.getElementById('pay-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
       document.body.appendChild(el);
     }
-
     function hideReminder() {
       const el = document.getElementById('pay-reminder');
       if (el) el.remove();
     }
 
     checkPendingPayment();
+    renderMySpot();
 
     // ---- SHARE BUTTON ----
     document.getElementById('share-btn').addEventListener('click', async () => {
@@ -557,14 +715,9 @@
         text: '🏓 Banana Smash Season 04 is live! Aug 22–23 at ACK Emanuel Church Karuri. Register now.',
         url: window.location.href
       };
-      if (navigator.share) {
-        try { await navigator.share(shareData); } catch (_) {}
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-        showToast('🔗 Link copied to clipboard!');
-      }
+      if (navigator.share) { try { await navigator.share(shareData); } catch (_) {} }
+      else { await navigator.clipboard.writeText(window.location.href); showToast('🔗 Link copied to clipboard!'); }
     });
-
   </script>
 
 </body>
