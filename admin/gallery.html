@@ -363,28 +363,44 @@
 
     checkSession();
   </script>
-
 <div class="scroll-progress" id="scroll-progress"></div>
 <script>
-  // Active nav link — matches current page filename
   (function(){
-    const path = location.pathname.split('/').pop() || 'index.html';
+    const currentPage = location.pathname.split('/').filter(Boolean).pop() || 'index.html';
+    const normalizeHref = href => (href || '')
+      .split(/[?#]/)[0]
+      .split('/')
+      .filter(Boolean)
+      .pop() || 'index.html';
+
     document.querySelectorAll('.navlinks a').forEach(a => {
-      const href = a.getAttribute('href').split('/').pop();
-      if (href === path) a.classList.add('active');
+      if (normalizeHref(a.getAttribute('href')) === currentPage) {
+        a.classList.add('active');
+      }
     });
   })();
 
-  // Shrink nav + scroll progress bar
   const navEl = document.querySelector('nav');
   const progressEl = document.getElementById('scroll-progress');
-  function onScroll(){
-    const y = window.scrollY;
-    navEl.classList.toggle('scrolled', y > 30);
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  if (navEl && progressEl) {
+    let ticking = false;
+    const update = () => {
+      const y = window.scrollY;
+      navEl.classList.toggle('scrolled', y > 30);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.width = max > 0 ? `${Math.min(100, Math.round((y / max) * 10000) / 100)}%` : '0%';
+      progressEl.style.opacity = max > 0 ? '1' : '0';
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
   }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
-</script></body>
+</script>
+</body>
 </html>
