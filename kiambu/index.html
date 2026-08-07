@@ -9,7 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
       <link rel="stylesheet" href="../assets/css/base.css"/>
   <link rel="stylesheet" href="../assets/css/kiambumain.css"/>
-  </head>
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+<link rel="shortcut icon" href="../assets/favicon.ico">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BArena">
+<meta property="og:title" content="Banana Smash — Kiambu Table Tennis Association">
+<meta property="og:description" content="Kiambu's official Banana Smash tournament hub — seasons, results, and live registration, powered by BArena.">
+<meta property="og:image" content="https://benique01.github.io/BArena/assets/images/slide1.jpg">
+<meta property="og:url" content="https://benique01.github.io/BArena/kiambu/index.html">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Banana Smash — Kiambu Table Tennis Association">
+<meta name="twitter:image" content="https://benique01.github.io/BArena/assets/images/slide1.jpg">
+</head>
   <body class="kitta-page">
 
   <div class="hash-loader" id="hash-loader">
@@ -441,7 +457,7 @@
   const progressEl = document.getElementById('scroll-progress');
   if (navEl && progressEl) {
     let ticking = false;
-    const update = () => {
+    const updateProgress = () => {
       const y = window.scrollY;
       navEl.classList.toggle('scrolled', y > 30);
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -452,11 +468,11 @@
     const onScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(update);
+        requestAnimationFrame(updateProgress);
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    update();
+    updateProgress();
   }
 </script>
 </body>

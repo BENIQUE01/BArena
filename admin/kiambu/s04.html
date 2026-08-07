@@ -254,7 +254,7 @@
   const progressEl = document.getElementById('scroll-progress');
   if (navEl && progressEl) {
     let ticking = false;
-    const update = () => {
+    const updateProgress = () => {
       const y = window.scrollY;
       navEl.classList.toggle('scrolled', y > 30);
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -265,11 +265,11 @@
     const onScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(update);
+        requestAnimationFrame(updateProgress);
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    update();
+    updateProgress();
   }
 </script>
 </body>

@@ -8,6 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/admin.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+<link rel="shortcut icon" href="../assets/favicon.ico">
 </head>
 <body>
 
@@ -86,7 +89,7 @@
   const progressEl = document.getElementById('scroll-progress');
   if (navEl && progressEl) {
     let ticking = false;
-    const update = () => {
+    const updateProgress = () => {
       const y = window.scrollY;
       navEl.classList.toggle('scrolled', y > 30);
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -97,11 +100,11 @@
     const onScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(update);
+        requestAnimationFrame(updateProgress);
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    update();
+    updateProgress();
   }
 </script>
 </body>

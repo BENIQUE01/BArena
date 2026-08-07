@@ -9,6 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/base.css"/>
   <link rel="stylesheet" href="assets/css/calendar.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon/android-chrome-192x192.png">
+  <link rel="shortcut icon" href="assets/images/favicon/favicon.ico">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BArena — Tournament management for every league">
+  <meta property="og:description" content="Plan, run, and share tournaments with a lightweight platform built for sports organizers and event teams.">
+  <meta property="og:image" content="https://benique01.github.io/BArena/assets/images/hero.jpg">
+  <meta property="og:url" content="https://benique01.github.io/BArena/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BArena — Tournament management for every league">
+  <meta name="twitter:description" content="Plan, run, and share tournaments with a lightweight platform built for sports organizers and event teams.">
+  <meta name="twitter:image" content="https://benique01.github.io/BArena/assets/images/hero.jpg">
 
 </head>
 <body class="calendar-page">
@@ -269,7 +284,7 @@
   const progressEl = document.getElementById('scroll-progress');
   if (navEl && progressEl) {
     let ticking = false;
-    const update = () => {
+    const updateProgress = () => {
       const y = window.scrollY;
       navEl.classList.toggle('scrolled', y > 30);
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -280,11 +295,11 @@
     const onScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(update);
+        requestAnimationFrame(updateProgress);
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    update();
+    updateProgress();
   }
 </script>
 </body>
