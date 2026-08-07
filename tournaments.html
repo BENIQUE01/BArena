@@ -83,11 +83,14 @@
   let searchTerm = '';
 
   // ─── FETCH ─────────────────────────────────────────────────
+  const FEDERATION_INSTITUTION_ID = 'f8518a6d-9963-4e3b-9548-d7e1374174f9';
+
   async function loadTournaments() {
     const { data: events, error } = await db
       .from('tournaments')
       .select('id, name, slug, status, start_date, end_date, venue, sport_id, institution_id, is_public')
       .eq('is_public', true)
+      .eq('institution_id', FEDERATION_INSTITUTION_ID)
       .not('start_date', 'is', null)
       .order('start_date', { ascending: false });
 

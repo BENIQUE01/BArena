@@ -17,6 +17,26 @@
 .app-modal h2,.app-modal .sub{padding-left:20px;padding-right:20px;}
 .app-slider{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px;}
 .app-slide img{width:100%;max-height:70vh;object-fit:contain;}
+
+.countdown-cool{display:flex;align-items:center;gap:6px;margin-bottom:22px;font-family:'Space Mono',monospace;}
+.cd-cool-item{background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border:1px solid rgba(255,120,40,0.35);border-radius:12px;padding:10px 14px;text-align:center;min-width:64px;box-shadow:0 0 18px rgba(255,120,40,0.15),inset 0 1px 0 rgba(255,255,255,0.08);}
+.cd-cool-num{display:block;font-size:26px;font-weight:700;color:var(--accent,#ff7a28);line-height:1;text-shadow:0 0 12px rgba(255,120,40,0.5);}
+.cd-cool-lab{display:block;font-size:9px;color:var(--text-dim,#9a9a9a);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-family:'Inter',sans-serif;}
+.cd-cool-sep{font-size:22px;color:var(--accent,#ff7a28);font-weight:700;opacity:.6;animation:cdBlink 1s infinite;}
+@keyframes cdBlink{0%,49%{opacity:.6}50%,100%{opacity:.15}}
+.cd-live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,40,40,0.12);border:1px solid rgba(220,40,40,0.4);color:#ff5c5c;padding:10px 16px;border-radius:12px;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;}
+.cd-live-badge .pulse-dot{width:8px;height:8px;border-radius:50%;background:#ff5c5c;box-shadow:0 0 8px #ff5c5c;animation:cdPulse 1.2s infinite;}
+@keyframes cdPulse{0%{transform:scale(1);opacity:1}70%{transform:scale(2);opacity:0}100%{opacity:0}}
+
+.mpesa-strip{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 20px;}
+.mpesa-badge{display:flex;align-items:center;gap:0;background:#00a651;border-radius:10px;overflow:hidden;box-shadow:0 4px 14px rgba(0,166,81,0.35);font-family:'Inter',sans-serif;}
+.mpesa-badge .mpesa-logo{background:#fff;color:#00a651;font-size:15px;font-weight:900;padding:9px 12px;letter-spacing:-0.02em;font-style:italic;position:relative;}
+.mpesa-badge .mpesa-logo::after{content:'';position:absolute;bottom:6px;left:9px;right:9px;height:2px;background:#e4022a;}
+.mpesa-badge .mpesa-text{display:flex;flex-direction:column;justify-content:center;padding:6px 14px;}
+.mpesa-badge .mpesa-label{color:#fff;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.85;line-height:1.3;}
+.mpesa-badge .mpesa-till{color:#fff;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;letter-spacing:.03em;line-height:1.3;}
+.seat-badge{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text,#eee);padding:9px 16px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;}
+.seat-badge b{color:var(--accent,#ff7a28);margin-left:4px;}
 </style>
 </head>
 <body class="home-page">
@@ -175,7 +195,13 @@
         <h2>Banana Smash S04</h2>
         <p class="tournament-desc">The flagship BARENA pilot. Table tennis at its finest, Aug 22–23, ACK Emanuel Church Karuri. Three categories, live bracket updates, real-time ELO tracking.</p>
         <div class="mpesa-strip">
-          <div class="mpesa-badge"><span class="mpesa-logo">M-PESA</span> Buy Goods Till <span class="mpesa-till">1569597</span></div>
+          <div class="mpesa-badge">
+            <span class="mpesa-logo">M-PESA</span>
+            <span class="mpesa-text">
+              <span class="mpesa-label">Buy Goods Till No.</span>
+              <span class="mpesa-till">1569597</span>
+            </span>
+          </div>
           <div class="seat-badge">🎟️ Spectator / Attend Only <b>Ksh 50</b></div>
         </div>
       </div>
