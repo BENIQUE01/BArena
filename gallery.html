@@ -14,6 +14,7 @@
 
 <nav>
   <div class="brand">BAR<span>ENA</span></div>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle">
   <div class="navlinks">
     <a href="index.html">Home</a>
     <a href="features.html">Features</a>
@@ -23,6 +24,8 @@
     <a href="about.html">About</a>
   </div>
   <button class="nav-cta" onclick="document.getElementById('appModal').classList.add('open')" style="border:none; cursor:pointer; font-family:inherit;">Install App</button>
+  <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
+  <label for="nav-toggle" class="nav-scrim"></label>
 </nav>
 
 <div class="page-hero">
@@ -49,7 +52,7 @@
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lb-close">✕</button>
   <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
-  <img id="lb-img" src="" alt=""/>
+  <div class="lb-media" id="lb-media"></div>
   <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
   <div class="lightbox-caption" id="lb-caption"></div>
 </div>
@@ -66,18 +69,18 @@
   let activeEventId = 'all';
   let lightboxPhotos = [];
   let lightboxIndex = 0;
+  const expandedEvents = new Set();
+  const SHOW_LIMIT = 12;
 
   async function loadGallery() {
     const [{ data: photos, error: pe }, { data: events }] = await Promise.all([
-db.from('event_photos').select('id, image_url, caption, tournament_id, created_at').order('created_at', { ascending: false }),
-     db.from('tournaments').select('id, name, slug, status, start_date')
+      db.from('event_photos').select('id, image_url, caption, tournament_id, media_type, created_at').order('created_at', { ascending: false }),
+      db.from('tournaments').select('id, name, slug, status, start_date')
     ]);
 
     if (pe) { renderError(); return; }
 
-// Build tournament map
     (events || []).forEach(e => { allEvents[e.id] = e; });
-
     allPhotos = photos || [];
 
     buildEventFilter();
@@ -86,7 +89,7 @@ db.from('event_photos').select('id, image_url, caption, tournament_id, created_a
 
   function buildEventFilter() {
     const container = document.getElementById('event-filter');
-const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean))];
+    const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean))];
 
     eventIds.forEach(id => {
       const e = allEvents[id];
@@ -112,64 +115,106 @@ const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean)
     });
   }
 
+  function renderEventSection(eventId, photos) {
+    const expanded = expandedEvents.has(eventId);
+    const showAll = expanded || photos.length <= SHOW_LIMIT;
+    const visible = showAll ? photos : photos.slice(0, SHOW_LIMIT);
+    const e = allEvents[eventId];
+    const eventLabel = e
+      ? `${e.name || 'Event'}${e.start_date ? ' · ' + new Date(e.start_date).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' }) : ''}`
+      : 'Photos';
+
+    const itemsHtml = visible.map(p => {
+      const globalIndex = lightboxPhotos.indexOf(p);
+      const isVideo = p.media_type === 'video';
+      return `
+        <div class="photo-item ${isVideo ? 'is-video' : ''}" data-index="${globalIndex}">
+          ${isVideo
+            ? `<video muted loop playsinline preload="none" data-src="${p.image_url}"></video><div class="video-badge">▶</div>`
+            : `<img src="${p.image_url}" alt="${p.caption || 'BArena event photo'}" loading="lazy"/>`}
+          <div class="photo-overlay"><span class="photo-caption">${p.caption || ''}</span></div>
+        </div>`;
+    }).join('');
+
+    const moreBtn = !showAll
+      ? `<div class="load-more-wrap"><button class="load-more-btn" data-expand="${eventId}">Show ${photos.length - SHOW_LIMIT} more</button></div>`
+      : '';
+
+    return `
+      <div class="gallery-event-section">
+        <div class="gallery-event-label">
+          <h2>${eventLabel}</h2>
+          <div class="divider"></div>
+          <span class="count">${photos.length} item${photos.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="masonry">${itemsHtml}</div>
+        ${moreBtn}
+      </div>`;
+  }
+
   function render() {
     const section = document.getElementById('gallery-section');
     const filtered = activeEventId === 'all'
       ? allPhotos
-: allPhotos.filter(p => p.tournament_id == activeEventId);
+      : allPhotos.filter(p => p.tournament_id == activeEventId);
 
     if (filtered.length === 0) {
       section.innerHTML = `
         <div class="empty-state">
           <div class="icon">📸</div>
           <h3>No photos yet</h3>
-          <p>Photos from events will appear here as they are uploaded.</p>
+          <p>Photos and videos from events will appear here as they are uploaded.</p>
         </div>`;
       return;
     }
 
-    // Group by event
     const groups = {};
     filtered.forEach(p => {
- const key = p.tournament_id || '__none__';
+      const key = p.tournament_id || '__none__';
       if (!groups[key]) groups[key] = [];
       groups[key].push(p);
     });
 
     lightboxPhotos = filtered;
 
-    section.innerHTML = Object.entries(groups).map(([eventId, photos]) => {
-      const e = allEvents[eventId];
-    const eventLabel = e
-        ? `${e.name || 'Event'}${e.start_date ? ' · ' + new Date(e.start_date).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' }) : ''}`
-        : 'Photos';
+    section.innerHTML = Object.entries(groups)
+      .map(([eventId, photos]) => renderEventSection(eventId, photos))
+      .join('');
 
-      return `
-        <div class="gallery-event-section">
-          <div class="gallery-event-label">
-            <h2>${eventLabel}</h2>
-            <div class="divider"></div>
-            <span class="count">${photos.length} photo${photos.length !== 1 ? 's' : ''}</span>
-          </div>
-          <div class="masonry">
-            ${photos.map((p, i) => {
-              const globalIndex = lightboxPhotos.indexOf(p);
-              return `
-                <div class="photo-item" data-index="${globalIndex}">
-                  <img src="${p.image_url}" alt="${p.caption || 'BArena event photo'}" loading="lazy"/>
-                  <div class="photo-overlay">
-                    <span class="photo-caption">${p.caption || ''}</span>
-                  </div>
-                </div>`;
-            }).join('')}
-          </div>
-        </div>`;
-    }).join('');
-
-    // Attach click handlers
-    section.querySelectorAll('.photo-item').forEach(item => {
+    section.querySelectorAll('.photo-item').forEach((item, i) => {
+      item.style.animationDelay = (i % SHOW_LIMIT) * 0.03 + 's';
       item.addEventListener('click', () => openLightbox(+item.dataset.index));
     });
+
+    section.querySelectorAll('[data-expand]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        expandedEvents.add(btn.dataset.expand);
+        render();
+      });
+    });
+
+    setupVideoAutoplay();
+  }
+
+  // Lazy-load + autoplay-in-view for video tiles, muted, pauses off-screen
+  function setupVideoAutoplay() {
+    const videos = document.querySelectorAll('.photo-item video[data-src]');
+    if (!('IntersectionObserver' in window)) {
+      videos.forEach(v => { v.src = v.dataset.src; });
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const v = entry.target;
+        if (entry.isIntersecting) {
+          if (!v.src) v.src = v.dataset.src;
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      });
+    }, { threshold: 0.4 });
+    videos.forEach(v => io.observe(v));
   }
 
   function renderError() {
@@ -192,13 +237,17 @@ const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean)
   function showLightboxPhoto() {
     const p = lightboxPhotos[lightboxIndex];
     if (!p) return;
-    document.getElementById('lb-img').src = p.image_url;
+    const isVideo = p.media_type === 'video';
+    document.getElementById('lb-media').innerHTML = isVideo
+      ? `<video src="${p.image_url}" controls autoplay playsinline></video>`
+      : `<img src="${p.image_url}" alt=""/>`;
     document.getElementById('lb-caption').textContent = p.caption || '';
   }
 
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
     document.body.style.overflow = '';
+    document.getElementById('lb-media').innerHTML = ''; // stop any playing video
   }
 
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
@@ -273,5 +322,27 @@ const eventIds = [...new Set(allPhotos.map(p => p.tournament_id).filter(Boolean)
   }
 })();
 </script>
-</body>
+<div class="scroll-progress" id="scroll-progress"></div>
+<script>
+  // Active nav link — matches current page filename
+  (function(){
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.navlinks a').forEach(a => {
+      const href = a.getAttribute('href').split('/').pop();
+      if (href === path) a.classList.add('active');
+    });
+  })();
+
+  // Shrink nav + scroll progress bar
+  const navEl = document.querySelector('nav');
+  const progressEl = document.getElementById('scroll-progress');
+  function onScroll(){
+    const y = window.scrollY;
+    navEl.classList.toggle('scrolled', y > 30);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+</script></body>
 </html>

@@ -177,14 +177,48 @@ body.kitta-page > * {
     display:flex; align-items:center; justify-content:space-between;
     padding:18px 28px; border-bottom:1px solid var(--line);
     position:sticky; top:0; background:rgba(13,17,23,0.85); backdrop-filter:blur(10px); z-index:30;
+    transition:padding .25s ease, background .25s ease;
   }
+  nav.scrolled{padding:11px 28px; background:rgba(13,17,23,0.96);}
+  .navlinks a.active{color:var(--text);}
+  .scroll-progress{position:fixed; top:0; left:0; height:2px; background:var(--accent); z-index:40; width:0%; transition:width .1s linear;}
   .brand{font-family:var(--font-display); font-size:26px; letter-spacing:.03em;}
   .brand span{color:var(--accent);}
   .navlinks{display:flex; gap:28px; font-size:13.5px; font-weight:600;}
   .navlinks a{text-decoration:none; color:var(--text-dim); transition:color .15s;}
   .navlinks a:hover{color:var(--text);}
   .nav-cta{background:var(--accent); color:#0d0d0d; font-weight:700; font-size:13px; padding:10px 20px; border-radius:6px; text-decoration:none;}
-  @media(max-width:760px){ .navlinks{display:none;} }
+
+  /* Hamburger drawer — pure CSS, no JS, works on every page */
+  .nav-toggle{display:none;}
+  .nav-burger{display:none; flex-direction:column; justify-content:center; gap:5px; width:34px; height:34px; cursor:pointer;}
+  .nav-burger span{display:block; width:100%; height:2px; background:var(--text); border-radius:2px; transition:transform .25s ease, opacity .2s ease;}
+  .nav-toggle:checked ~ .nav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle:checked ~ .nav-burger span:nth-child(2){opacity:0;}
+  .nav-toggle:checked ~ .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .nav-scrim{display:none;}
+
+  @media(max-width:760px){
+    .nav-burger{display:flex; order:3;}
+    .nav-cta{order:2; font-size:12px; padding:9px 16px; margin-right:6px;}
+    .navlinks{
+      position:fixed; top:0; right:0; height:100vh; width:min(78vw,320px);
+      background:rgba(13,17,23,0.98); backdrop-filter:blur(14px);
+      flex-direction:column; align-items:flex-start; gap:0;
+      padding:88px 28px 28px;
+      transform:translateX(100%); transition:transform .3s ease;
+      z-index:35; border-left:1px solid var(--line);
+      overflow-y:auto; -webkit-overflow-scrolling:touch;
+    }
+    .navlinks a{width:100%; padding:16px 0; border-bottom:1px solid var(--line); font-size:16px;}
+    .nav-toggle:checked ~ .navlinks{transform:translateX(0);}
+    .nav-scrim{
+      display:block; position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:32;
+    }
+    .nav-toggle:checked ~ .nav-scrim{opacity:1; pointer-events:auto;}
+  }
+  body:has(.nav-toggle:checked){overflow:hidden;}
 
   /* ---- buttons (every page) ---- */
   .btn{display:inline-block; font-weight:700; font-size:14.5px; padding:15px 32px; border-radius:6px; text-decoration:none; transition:transform .15s ease;}

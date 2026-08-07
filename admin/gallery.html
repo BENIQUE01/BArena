@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARENA Admin — Gallery Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+<style>
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+.live-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.admin-login p{margin-bottom:0;}
+
+.upload-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:28px;}
+.upload-panel h3{font-family:var(--font-display);font-size:19px;text-transform:uppercase;margin-bottom:14px;}
+.field-row{margin-bottom:16px;}
+.field-row label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+.field-row select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:14px;}
+
+.dropzone{
+  border:2px dashed var(--border); border-radius:12px; padding:36px 20px; text-align:center;
+  cursor:pointer; transition:border-color .2s, background .2s; margin-bottom:18px;
+}
+.dropzone.drag{ border-color:var(--accent); background:rgba(255,106,61,0.06); }
+.dropzone .dz-icon{font-size:28px;margin-bottom:8px;}
+.dropzone .dz-text{color:var(--muted);font-size:13.5px;}
+.dropzone input{display:none;}
+
+.file-queue{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.file-card{
+  display:flex; align-items:center; gap:12px; background:var(--bg); border:1px solid var(--border);
+  border-radius:10px; padding:10px 12px;
+}
+.file-card .thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;background:#000;flex-shrink:0;}
+.file-card .thumb.video-thumb{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;}
+.file-card .meta{flex:1;min-width:0;}
+.file-card .fname{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-card input[type=text]{
+  width:100%;margin-top:6px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg-panel);color:var(--text);font-size:12px;
+}
+.file-card .status{font-size:11px;color:var(--muted);white-space:nowrap;}
+.file-card .status.ok{color:#3ddc84;}
+.file-card .status.err{color:#ff6a6a;}
+.file-card .remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;}
+
+.upload-actions{display:flex;gap:10px;align-items:center;}
+.upload-actions button{
+  background:var(--accent);color:#0d0d0d;font-weight:700;font-size:13.5px;padding:11px 22px;
+  border:none;border-radius:8px;cursor:pointer;
+}
+.upload-actions button:disabled{opacity:.5;cursor:not-allowed;}
+.upload-actions .progress-text{font-size:12.5px;color:var(--muted);}
+
+.recent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:8px;}
+.recent-item{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#000;}
+.recent-item img,.recent-item video{width:100%;height:100%;object-fit:cover;}
+.recent-item .del-btn{
+  position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:#fff;
+  width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:12px;
+}
+.recent-item .rv-badge{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,0.6);color:#fff;font-size:10px;padding:2px 6px;border-radius:6px;}
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="brand">BAR<span>ENA</span> <span style="font-size:12px; color:var(--text-dim); font-family:var(--font-body); font-weight:600;">ADMIN</span></div>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <div class="navlinks"></div>
+    <a class="nav-cta" href="../index.html">← Site</a>
+    <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
+    <label for="nav-toggle" class="nav-scrim"></label>
+  </nav>
+
+  <div class="wrap">
+
+    <div id="login-view" class="admin-login">
+      <div class="hero-badge"><span class="live-indicator"></span>Gallery — Admin</div>
+      <h2>Admin Login</h2>
+      <p>Sign in with your BARENA account to manage the gallery.</p>
+      <form class="reg-form" id="login-form">
+        <label for="login-email">Email or Username</label>
+        <input type="text" id="login-email" required placeholder="username or email">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+        <button type="submit" id="login-btn">Sign In</button>
+        <div class="reg-msg" id="login-msg"></div>
+      </form>
+    </div>
+
+    <div id="admin-view" style="display:none;">
+      <div class="admin-bar">
+        <div>
+          <div class="section-title" style="font-size:24px;">Gallery Manager</div>
+          <div class="who" id="who-label"></div>
+        </div>
+        <button id="logout-btn">Sign Out</button>
+      </div>
+
+      <div class="upload-panel">
+        <h3>Upload Photos &amp; Videos</h3>
+
+        <div class="field-row">
+          <label for="tournament-select">Tag to Event (optional)</label>
+          <select id="tournament-select">
+            <option value="">No specific event</option>
+          </select>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dz-icon">📤</div>
+          <div class="dz-text"><strong>Tap to choose files</strong> or drag &amp; drop here<br>Images and videos supported</div>
+          <input type="file" id="file-input" multiple accept="image/*,video/*">
+        </div>
+
+        <div class="file-queue" id="file-queue"></div>
+
+        <div class="upload-actions">
+          <button type="button" id="upload-all-btn" disabled>Upload All</button>
+          <span class="progress-text" id="progress-text"></span>
+        </div>
+      </div>
+
+      <div class="upload-panel">
+        <h3>Recently Uploaded</h3>
+        <div class="recent-grid" id="recent-grid">
+          <div style="color:var(--muted);font-size:13px;">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://xtbvzdupauxuxchhmshd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo";
+    const BUCKET = "gallery-media";
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loginView = document.getElementById('login-view');
+    const adminView = document.getElementById('admin-view');
+    const loginForm = document.getElementById('login-form');
+    const loginMsg = document.getElementById('login-msg');
+    const loginBtn = document.getElementById('login-btn');
+    const whoLabel = document.getElementById('who-label');
+
+    async function checkSession(){
+      const { data: { session } } = await sb.auth.getSession();
+      if (session){
+        showAdmin(session.user.email);
+      } else {
+        loginView.style.display = 'block';
+        adminView.style.display = 'none';
+      }
+    }
+
+    function showAdmin(email){
+      loginView.style.display = 'none';
+      adminView.style.display = 'block';
+      whoLabel.textContent = `Signed in as ${email}`;
+      loadTournaments();
+      loadRecent();
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Signing in…";
+      loginMsg.textContent = "";
+      loginMsg.className = "reg-msg";
+
+      const identifier = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      let emailToUse = identifier;
+      if (!identifier.includes('@')) {
+        const { data: profile, error: profileError } = await sb
+          .from('profiles')
+          .select('email')
+          .eq('username', identifier)
+          .maybeSingle();
+        if (profileError || !profile) {
+          loginMsg.textContent = "Username not found.";
+          loginMsg.classList.add('err');
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Sign In";
+          return;
+        }
+        emailToUse = profile.email;
+      }
+
+      let { data, error } = await sb.auth.signInWithPassword({ email: emailToUse, password });
+
+      if (error){
+        loginMsg.textContent = "Login failed — check your email and password.";
+        loginMsg.classList.add('err');
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Sign In";
+      } else {
+        showAdmin(data.user.email);
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      location.reload();
+    });
+
+    // ─── Tournament dropdown ────────────────────────────────
+    async function loadTournaments(){
+      const { data } = await sb.from('tournaments').select('id, name, start_date').order('start_date', { ascending: false });
+      const sel = document.getElementById('tournament-select');
+      (data || []).forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name || t.id;
+        sel.appendChild(opt);
+      });
+    }
+
+    // ─── File queue ─────────────────────────────────────────
+    let queue = []; // { file, caption, status }
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    const fileQueueEl = document.getElementById('file-queue');
+    const uploadAllBtn = document.getElementById('upload-all-btn');
+    const progressText = document.getElementById('progress-text');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag');
+      addFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+
+    function addFiles(fileList){
+      Array.from(fileList).forEach(file => {
+        if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return;
+        queue.push({ file, caption: '', status: 'queued' });
+      });
+      renderQueue();
+    }
+
+    function renderQueue(){
+      fileQueueEl.innerHTML = queue.map((q, i) => {
+        const isVideo = q.file.type.startsWith('video/');
+        const url = URL.createObjectURL(q.file);
+        return `
+          <div class="file-card" data-i="${i}">
+            ${isVideo
+              ? `<div class="thumb video-thumb">▶</div>`
+              : `<img class="thumb" src="${url}"/>`}
+            <div class="meta">
+              <div class="fname">${q.file.name}</div>
+              <input type="text" placeholder="Caption (optional)" data-caption="${i}" value="${q.caption}">
+            </div>
+            <span class="status ${q.status === 'done' ? 'ok' : q.status === 'error' ? 'err' : ''}">${q.status}</span>
+            <button type="button" class="remove-btn" data-remove="${i}">✕</button>
+          </div>`;
+      }).join('');
+
+      fileQueueEl.querySelectorAll('[data-caption]').forEach(inp => {
+        inp.addEventListener('input', () => { queue[+inp.dataset.caption].caption = inp.value; });
+      });
+      fileQueueEl.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => { queue.splice(+btn.dataset.remove, 1); renderQueue(); });
+      });
+
+      uploadAllBtn.disabled = queue.length === 0;
+    }
+
+    uploadAllBtn.addEventListener('click', async () => {
+      uploadAllBtn.disabled = true;
+      const tournamentId = document.getElementById('tournament-select').value || null;
+      let done = 0;
+      const total = queue.filter(q => q.status !== 'done').length;
+
+      for (const q of queue) {
+        if (q.status === 'done') continue;
+        q.status = 'uploading…';
+        renderQueue();
+        progressText.textContent = `Uploading ${done + 1} of ${total}…`;
+
+        try {
+          const isVideo = q.file.type.startsWith('video/');
+          const safeName = q.file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+          const path = `${tournamentId || 'general'}/${Date.now()}-${safeName}`;
+
+          const { error: upErr } = await sb.storage.from(BUCKET).upload(path, q.file, { cacheControl: '3600', upsert: false });
+          if (upErr) throw upErr;
+
+          const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(path);
+
+          const { error: insErr } = await sb.from('event_photos').insert({
+            image_url: pub.publicUrl,
+            storage_path: path,
+            caption: q.caption || null,
+            tournament_id: tournamentId,
+            media_type: isVideo ? 'video' : 'image'
+          });
+          if (insErr) throw insErr;
+
+          q.status = 'done';
+        } catch (err) {
+          console.error(err);
+          q.status = 'error';
+        }
+        done++;
+        renderQueue();
+      }
+
+      progressText.textContent = `Done — ${done} file${done !== 1 ? 's' : ''} processed.`;
+      loadRecent();
+      setTimeout(() => {
+        queue = queue.filter(q => q.status !== 'done');
+        renderQueue();
+      }, 1500);
+    });
+
+    // ─── Recently uploaded ──────────────────────────────────
+    async function loadRecent(){
+      const grid = document.getElementById('recent-grid');
+      const { data, error } = await sb
+        .from('event_photos')
+        .select('id, image_url, media_type, storage_path, caption, created_at')
+        .order('created_at', { ascending: false })
+        .limit(24);
+
+      if (error || !data || data.length === 0){
+        grid.innerHTML = `<div style="color:var(--muted);font-size:13px;">No uploads yet.</div>`;
+        return;
+      }
+
+      grid.innerHTML = data.map(p => `
+        <div class="recent-item" data-id="${p.id}" data-path="${p.storage_path || ''}">
+          ${p.media_type === 'video'
+            ? `<video src="${p.image_url}" muted></video><span class="rv-badge">VIDEO</span>`
+            : `<img src="${p.image_url}"/>`}
+          <button class="del-btn" data-del="${p.id}" data-path="${p.storage_path || ''}">✕</button>
+        </div>`).join('');
+
+      grid.querySelectorAll('[data-del]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this item permanently?')) return;
+          const id = btn.dataset.del;
+          const path = btn.dataset.path;
+          if (path) await sb.storage.from(BUCKET).remove([path]);
+          await sb.from('event_photos').delete().eq('id', id);
+          loadRecent();
+        });
+      });
+    }
+
+    checkSession();
+  </script>
+
+<div class="scroll-progress" id="scroll-progress"></div>
+<script>
+  // Active nav link — matches current page filename
+  (function(){
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.navlinks a').forEach(a => {
+      const href = a.getAttribute('href').split('/').pop();
+      if (href === path) a.classList.add('active');
+    });
+  })();
+
+  // Shrink nav + scroll progress bar
+  const navEl = document.querySelector('nav');
+  const progressEl = document.getElementById('scroll-progress');
+  function onScroll(){
+    const y = window.scrollY;
+    navEl.classList.toggle('scrolled', y > 30);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+</script></body>
+</html>

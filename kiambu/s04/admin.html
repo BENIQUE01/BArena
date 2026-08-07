@@ -35,11 +35,14 @@
 
     <nav>
       <div class="brand">BAR<span>ENA</span> <span class="admin-tag">ADMIN</span></div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle">
       <div class="navlinks">
         <a href="index.html">← Back to S04</a>
         <a href="../index.html">KITTA Hub</a>
       </div>
       <button class="nav-cta" id="logout-btn">Sign Out</button>
+      <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
+      <label for="nav-toggle" class="nav-scrim"></label>
     </nav>
 
     <div class="admin-wrap">
@@ -364,5 +367,27 @@
     checkSession();
   </script>
 
-</body>
+<div class="scroll-progress" id="scroll-progress"></div>
+<script>
+  // Active nav link — matches current page filename
+  (function(){
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.navlinks a').forEach(a => {
+      const href = a.getAttribute('href').split('/').pop();
+      if (href === path) a.classList.add('active');
+    });
+  })();
+
+  // Shrink nav + scroll progress bar
+  const navEl = document.querySelector('nav');
+  const progressEl = document.getElementById('scroll-progress');
+  function onScroll(){
+    const y = window.scrollY;
+    navEl.classList.toggle('scrolled', y > 30);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+</script></body>
 </html>

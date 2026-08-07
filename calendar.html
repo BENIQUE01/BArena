@@ -15,6 +15,7 @@
 
 <nav>
   <div class="brand">BAR<span>ENA</span></div>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle">
   <div class="navlinks">
     <a href="index.html">Home</a>
     <a href="features.html">Features</a>
@@ -24,6 +25,8 @@
     <a href="about.html">About</a>
   </div>
   <button class="nav-cta" onclick="document.getElementById('appModal').classList.add('open')" style="border:none; cursor:pointer; font-family:inherit;">Install App</button>
+  <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
+  <label for="nav-toggle" class="nav-scrim"></label>
 </nav>
 
 <div class="page-hero">
@@ -238,5 +241,37 @@
   }
 })();
 </script>
+<div class="scroll-progress" id="scroll-progress"></div>
+<script>
+  // Active nav link — matches current page filename
+  (function(){
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.navlinks a').forEach(a => {
+      const href = a.getAttribute('href').split('/').pop();
+      if (href === path) a.classList.add('active');
+    });
+  })();
+
+  // Shrink nav + scroll progress bar
+  const navEl = document.querySelector('nav');
+  const progressEl = document.getElementById('scroll-progress');
+  function onScroll(){
+    const y = window.scrollY;
+    navEl.classList.toggle('scrolled', y > 30);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+</script>
+
+<footer>
+  <div class="org">BARENA</div>
+  Global Tournament Management Platform
+  <div style="margin-top:14px;">
+    <a href="admin/index.html" title="Admin" style="color:var(--text-dim); opacity:.35; font-size:13px; text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.35">⚙</a>
+  </div>
+</footer>
+
 </body>
 </html>

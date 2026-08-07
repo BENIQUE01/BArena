@@ -149,3 +149,27 @@
 @media (max-width: 640px) {
   .masonry { columns: 2 140px; }
 }
+
+/* ─── Video support + entrance animation (added) ─────────── */
+.photo-item{ opacity:0; transform:translateY(14px) scale(0.98); animation:galleryIn .55s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes galleryIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+
+.photo-item video{ width:100%; display:block; background:#000; }
+.video-badge{
+  position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px;
+  pointer-events:none; z-index:2;
+}
+
+.lightbox video{ max-width:90vw; max-height:85vh; border-radius:10px; background:#000; display:block; }
+.lb-media{ display:flex; align-items:center; justify-content:center; }
+.lb-media img{ max-width:90vw; max-height:85vh; border-radius:10px; object-fit:contain; }
+
+.load-more-wrap{ text-align:center; margin:4px 0 36px; }
+.load-more-btn{
+  background:var(--card); border:1px solid var(--border); color:var(--text);
+  padding:0.7rem 1.6rem; border-radius:999px; font-size:0.85rem; font-weight:600;
+  cursor:pointer; transition:border-color .2s, transform .15s;
+}
+.load-more-btn:hover{ border-color:var(--accent); transform:translateY(-1px); }
