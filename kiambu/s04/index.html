@@ -11,7 +11,8 @@
 <style>
 /* ---------- Layout base ---------- */
 *{box-sizing:border-box;}
-.hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.hero-bg svg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.9;}
 .glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;}
 .glow-1{width:400px;height:400px;background:var(--accent);top:-100px;left:-100px;}
 .glow-2{width:320px;height:320px;background:var(--accent2);bottom:-80px;right:-80px;}
@@ -19,9 +20,15 @@
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,106,61,0.12);border:1px solid rgba(255,106,61,0.3);border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
 .live-indicator{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.countdown{display:flex;gap:10px;margin-top:20px;}
+.cd-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:56px;}
+.cd-num{font-family:var(--font-display);font-size:22px;color:var(--accent);line-height:1;}
+.cd-lab{font-size:9.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}
+.cd-live{color:var(--accent2);font-weight:700;font-size:14px;}
 
 .hero-title{font-family:var(--font-display);font-size:clamp(34px,8vw,58px);text-transform:uppercase;letter-spacing:.02em;line-height:1;margin-bottom:6px;}
 .hero-sub{font-size:clamp(13px,2vw,15px);color:var(--text-dim);}
+.hero-org{font-size:12px;color:var(--text-dim);margin-top:10px;letter-spacing:.02em;}
 .hero-quickfacts{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-family:var(--font-mono);font-size:12.5px;color:var(--text-dim);}
 .hero-quickfacts b{color:var(--text);}
 
@@ -72,13 +79,15 @@
 .confirmed-empty{padding:20px;text-align:center;color:var(--text-dim);font-size:13px;}
 
 /* ---------- Forms ---------- */
-.lookup-block,.register-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+.lookup-block,.register-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.18);}
 .lookup-block h3,.register-block h3,.pay-card h3{font-family:var(--font-display);font-size:19px;text-transform:uppercase;margin-bottom:5px;}
 .lookup-block p,.register-block p,.pay-card p{color:var(--text-dim);font-size:13px;margin-bottom:14px;}
 input,select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;margin-bottom:12px;}
 input:focus,select:focus{outline:none;border-color:var(--accent2);}
 label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:5px;}
-button.primary{width:100%;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:14px;padding:13px;border:none;border-radius:8px;cursor:pointer;}
+button.primary{width:100%;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:14px;padding:13px;border:none;border-radius:8px;cursor:pointer;transition:transform .12s ease,filter .12s ease;}
+button.primary:hover:not(:disabled){filter:brightness(1.08);}
+button.primary:active:not(:disabled){transform:scale(0.98);}
 button.primary:disabled{opacity:.5;cursor:not-allowed;}
 button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px;padding:13px;border-radius:8px;cursor:pointer;}
 .pay-msg{margin-top:10px;font-size:13px;text-align:center;}
@@ -108,7 +117,7 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 .ticket{background:var(--surface);border:1px solid var(--border);border-radius:18px;max-width:360px;width:100%;overflow:hidden;position:relative;animation:ticketPop .3s ease;}
 @keyframes ticketPop{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
 .ticket-top{background:var(--accent);color:#0d0d0d;padding:22px;text-align:center;}
-.ticket-top .big-check{font-size:38px;margin-bottom:6px;}
+.ticket-top .big-check{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
 .ticket-top h2{font-family:var(--font-display);font-size:22px;text-transform:uppercase;}
 .ticket-body{padding:20px 22px;}
 .ticket-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
@@ -139,13 +148,20 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
   <header class="hero" style="position:relative; overflow:hidden;">
     <div class="hero-bg"><div class="glow glow-1"></div><div class="glow glow-2"></div></div>
     <div class="hero-inner">
-      <div class="hero-badge"><span class="live-indicator"></span> Phase 01 — Kiambu Edition Live</div>
+      <div class="hero-badge"><span class="live-indicator"></span> Registration open — Phase 01</div>
       <div class="hero-title">Banana Smash</div>
       <div class="hero-sub">Season 04 · Kiambu County · Aug 22–23, 2026</div>
+      <div class="hero-org">Organized by Kiambu Table Tennis Association</div>
       <div class="hero-quickfacts">
         <span>📅 <b>Aug 22–23</b></span>
         <span>🕐 <b>1:00–7:00pm</b></span>
         <span>📍 <b>ACK Emanuel, Karuri</b></span>
+      </div>
+      <div class="countdown" id="countdown">
+        <div class="cd-item"><div class="cd-num" id="cd-days">–</div><div class="cd-lab">Days</div></div>
+        <div class="cd-item"><div class="cd-num" id="cd-hours">–</div><div class="cd-lab">Hrs</div></div>
+        <div class="cd-item"><div class="cd-num" id="cd-mins">–</div><div class="cd-lab">Min</div></div>
+        <div class="cd-item"><div class="cd-num" id="cd-secs">–</div><div class="cd-lab">Sec</div></div>
       </div>
     </div>
   </header>
@@ -186,7 +202,7 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 
     <div class="confirmed-list-block" style="margin-top:20px;">
       <button class="info-toggle open" id="toggle-confirmed" onclick="toggleInfo('confirmed')">
-        <span>✅ Confirmed Players</span><span class="chev">▾</span>
+        <span>Confirmed players</span><span class="chev">▾</span>
       </button>
       <div class="info-body open" id="body-confirmed">
         <div id="confirmed-list" class="confirmed-list">
@@ -214,10 +230,10 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 
       <div class="entry-toggle">
         <button type="button" id="entry-compete" class="active" onclick="setEntryType('compete')">
-          🏓 Compete<span class="price">from Ksh 100</span>
+          Compete<span class="price">from Ksh 100</span>
         </button>
         <button type="button" id="entry-watch" onclick="setEntryType('watch')">
-          🎟️ Just Watching<span class="price">Ksh 50</span>
+          Attend Only<span class="price">Ksh 50</span>
         </button>
       </div>
 
@@ -247,10 +263,15 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 
       <div class="pay-card" id="pay-card" style="display:none;">
         <h3>💳 Complete Payment</h3>
-        <p>An M-Pesa prompt will be sent to the number below.</p>
-        <label for="pay-phone">M-Pesa Number</label>
-        <input type="tel" id="pay-phone" placeholder="e.g. 0712345678">
-        <button type="button" class="primary" id="pay-now-btn">Pay Now</button>
+        <p>Go to M-Pesa → Lipa na M-Pesa → Buy Goods and Services.</p>
+        <div style="background:var(--bg);border:1px solid var(--accent);border-radius:10px;padding:16px;text-align:center;margin-bottom:16px;">
+          <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Till Number</div>
+          <div style="font-family:var(--font-display);font-size:32px;color:var(--accent);letter-spacing:.05em;">1569597</div>
+        </div>
+        <p style="font-size:12.5px;">Once paid, enter the M-Pesa confirmation code from your SMS below. Your spot is confirmed once the organizer verifies it — usually within a few minutes.</p>
+        <label for="pay-code">M-Pesa Confirmation Code</label>
+        <input type="text" id="pay-code" placeholder="e.g. QFT7X8Y2ZP" style="text-transform:uppercase;">
+        <button type="button" class="primary" id="pay-now-btn">I've Paid — Submit Code</button>
         <div class="pay-msg" id="pay-msg"></div>
       </div>
     </div>
@@ -269,7 +290,7 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 
   <footer>
     <div class="org">BARENA — Kiambu County · Phase 01</div>
-    Hosted with ACK Emanuel Church Karuri, Diocese of Mount Kenya South
+    Official tournament of the Kiambu Table Tennis Association · Hosted with ACK Emanuel Church Karuri, Diocese of Mount Kenya South
     <div style="margin-top:16px;">
       <button class="btn btn-ghost" id="share-btn" style="font-size:13px;">🔗 Share This Tournament</button>
     </div>
@@ -282,8 +303,10 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
     <div class="ticket">
       <button class="modal-close-btn" onclick="closeTicketModal()">✕</button>
       <div class="ticket-top">
-        <div class="big-check">🎉</div>
-        <h2>You're In!</h2>
+        <div class="big-check">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0d0d0d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>Registration secured</h2>
       </div>
       <div class="ticket-body">
         <div class="ticket-row"><span class="k">Name</span><span class="v" id="ticket-name">—</span></div>
@@ -311,6 +334,36 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
     const SEAT_PRICE = 50;
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ---- COUNTDOWN ----
+    const EVENT_START = new Date("2026-08-22T13:00:00+03:00");
+    const EVENT_END   = new Date("2026-08-23T19:00:00+03:00");
+
+    function updateCountdown(){
+      const el = document.getElementById('countdown');
+      const now = new Date();
+
+      if (now > EVENT_END) {
+        el.innerHTML = '<div class="cd-live">Event has ended</div>';
+        return;
+      }
+      if (now >= EVENT_START) {
+        el.innerHTML = '<div class="cd-live">🔴 Live now</div>';
+        return;
+      }
+
+      const diff = EVENT_START - now;
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+
+      document.getElementById('cd-days').textContent = days;
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
     // ---- TABS ----
     function switchTab(name){
@@ -366,6 +419,40 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
     const msg = document.getElementById('reg-msg');
     const submitBtn = document.getElementById('reg-submit');
 
+    let duplicateConfirmed = false;
+
+    async function checkDuplicate(phone){
+      if (!phone) return null;
+      const { data: players } = await sb.from('players').select('id').eq('phone', phone);
+      const playerIds = (players || []).map(p => p.id);
+
+      if (entryType === 'compete') {
+        const category_id = document.getElementById('category').value;
+        if (!category_id || playerIds.length === 0) return null;
+        const { data: existing } = await sb
+          .from('category_entries')
+          .select('id')
+          .eq('category_id', category_id)
+          .in('player_id', playerIds)
+          .limit(1);
+        if (existing && existing.length > 0) {
+          const catName = document.getElementById('category').selectedOptions[0]?.text.split(' — ')[0] || 'this category';
+          return `This phone number already has an entry in ${catName}. Tap "Register Anyway" if this is intentional (e.g. registering for a friend).`;
+        }
+      } else {
+        const { data: existing } = await sb
+          .from('seat_bookings')
+          .select('id')
+          .eq('tournament_id', TOURNAMENT_ID)
+          .eq('phone', phone)
+          .limit(1);
+        if (existing && existing.length > 0) {
+          return `This phone number already has a spectator seat booked. Tap "Register Anyway" if this is intentional.`;
+        }
+      }
+      return null;
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
@@ -376,6 +463,19 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
       const full_name = document.getElementById('full_name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const mpesa_code = document.getElementById('mpesa_code').value.trim();
+
+      if (!duplicateConfirmed) {
+        const dup = await checkDuplicate(phone);
+        if (dup) {
+          msg.textContent = dup;
+          msg.className = "pay-msg err";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Register Anyway";
+          duplicateConfirmed = true;
+          return;
+        }
+      }
+      duplicateConfirmed = false;
 
       try{
         let entryId, amount, categoryLabel, entryTable;
@@ -586,72 +686,50 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
     document.getElementById('pay-now-btn').addEventListener('click', async () => {
       const btn = document.getElementById('pay-now-btn');
       const payMsg = document.getElementById('pay-msg');
-      const phone = document.getElementById('pay-phone').value.trim();
+      const code = document.getElementById('pay-code').value.trim().toUpperCase();
       const card = document.getElementById('pay-card');
       const entryId = card.dataset.entryId;
       const entryTable = card.dataset.entryTable || 'category_entries';
-      let amount = parseInt(card.dataset.amount || '0', 10);
 
-      if (!phone) { payMsg.textContent = "Enter the M-Pesa number to pay from."; payMsg.className = "pay-msg err"; return; }
+      if (!code) {
+        payMsg.textContent = "Enter the M-Pesa confirmation code from your SMS.";
+        payMsg.className = "pay-msg err";
+        return;
+      }
 
-      btn.disabled = true; btn.textContent = "Sending prompt…"; payMsg.textContent = ""; payMsg.className = "pay-msg";
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+      payMsg.textContent = "";
+      payMsg.className = "pay-msg";
 
       try {
-        if (!amount) {
-          if (entryTable === 'seat_bookings') {
-            amount = SEAT_PRICE;
-          } else {
-            const { data: entryRow, error: entryLookupErr } = await sb.from('category_entries').select('category_id').eq('id', entryId).single();
-            if (entryLookupErr || !entryRow) {
-              payMsg.textContent = "Couldn't verify your registration — please refresh and try again.";
-              payMsg.classList.add('err');
-              btn.disabled = false; btn.textContent = "Pay Now";
-              return;
-            }
-            amount = entryRow.category_id === CATEGORY_IDS.junior ? 100 : 200;
-          }
-        }
+        const { error } = await sb
+          .from(entryTable)
+          .update({ mpesa_code: code })
+          .eq('id', entryId);
 
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/initiate-stk-push`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, amount, registration_id: entryId })
-        });
-        const data = await res.json();
+        if (error) throw error;
 
-        if (data.ResponseCode === "0") {
-          payMsg.textContent = "📲 Check your phone — enter your M-Pesa PIN to complete payment.";
-          payMsg.classList.add('ok');
-          startPaymentPolling(entryId, entryTable);
-        } else {
-          payMsg.textContent = data.errorMessage || "Payment prompt failed — please try again.";
-          payMsg.classList.add('err');
+        payMsg.textContent = "✅ Code submitted! Your spot will be confirmed shortly once verified.";
+        payMsg.classList.add('ok');
+        btn.textContent = "Submitted";
+
+        const saved = localStorage.getItem('barena_pending_entry');
+        if (saved) {
+          const p = JSON.parse(saved);
+          p.mpesa_code = code;
+          localStorage.setItem('barena_pending_entry', JSON.stringify(p));
         }
+        renderMySpot();
+
       } catch (err) {
         console.error(err);
-        payMsg.textContent = "Something went wrong sending the payment prompt.";
+        payMsg.textContent = "Something went wrong submitting your code — please try again.";
         payMsg.classList.add('err');
-      } finally {
         btn.disabled = false;
-        btn.textContent = "Pay Now";
+        btn.textContent = "I've Paid — Submit Code";
       }
     });
-
-    function startPaymentPolling(entryId, entryTable) {
-      const interval = setInterval(async () => {
-        const { data } = await sb.from(entryTable).select('payment_status').eq('id', entryId).single();
-        if (data?.payment_status === 'confirmed') {
-          clearInterval(interval);
-          document.getElementById('pay-msg').textContent = "✅ Payment confirmed! You're all set.";
-          document.getElementById('pay-card').style.display = 'none';
-          localStorage.removeItem('barena_pending_entry');
-          loadConfirmedPlayers();
-          refreshCounts();
-          hideReminder();
-          renderMySpot();
-        }
-      }, 4000);
-    }
 
     // ---- MY SPOT TAB ----
     function renderMySpot(){

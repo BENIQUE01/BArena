@@ -149,9 +149,17 @@
           <div class="lab">Day(s)</div>
         </div>
       </div>
-      <div class="modal-venue" id="modal-venue"></div>
-    </div>
-  </div>
+      <link rel="stylesheet" href="../assets/css/kiambumain.css"/>
+<style>
+.modal-results{margin-top:20px;border-top:1px solid var(--border);padding-top:16px;}
+.mr-cat{margin-bottom:14px;}
+.mr-cat-name{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin-bottom:8px;}
+.mr-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13.5px;}
+.mr-medal{width:22px;text-align:center;font-size:14px;}
+.mr-name{font-weight:600;}
+.mr-loading,.mr-empty{color:var(--text-dim);font-size:12.5px;padding:8px 0;}
+</style>
+</head>
 
   <footer>
     <div class="org">KIAMBU TABLE TENNIS ASSOCIATION</div>
@@ -286,7 +294,7 @@
       grid.innerHTML = cards.join('');
     }
 
-    function openModal(id) {
+    async function openModal(id) {
       const t = allSeasons.find(s => s.id === id);
       if (!t) return;
       const meta = SEASON_META[t.slug] || { num: '??', label: t.name };
@@ -298,6 +306,72 @@
       document.getElementById('modal-days').textContent = daysBetween(t.start_date, t.end_date);
       document.getElementById('modal-venue').textContent = t.venue ? `📍 ${t.venue}` : '📍 Venue not recorded';
       document.getElementById('modal-overlay').classList.add('open');
+
+      const resultsEl = document.getElementById('modal-results');
+      if (t.status !== 'completed') {
+        resultsEl.innerHTML = '';
+        return;
+      }
+      resultsEl.innerHTML = '<div class="mr-loading">Loading results…</div>';
+      resultsEl.innerHTML = await loadSeasonResults(t.id);
+    }
+
+    async function loadSeasonResults(tournamentId) {
+      const { data: cats } = await db
+        .from('categories')
+        .select('id, name')
+        .eq('tournament_id', tournamentId);
+
+      if (!cats || cats.length === 0) return '<div class="mr-empty">No categories recorded.</div>';
+
+      const catIds = cats.map(c => c.id);
+
+      const { data: matches } = await db
+        .from('matches')
+        .select('category_id, round, entry1_id, entry2_id, winner_entry_id')
+        .in('category_id', catIds)
+        .not('winner_entry_id', 'is', null);
+
+      if (!matches || matches.length === 0) return '<div class="mr-empty">No results recorded yet.</div>';
+
+      const entryIds = new Set();
+      matches.forEach(m => { if (m.entry1_id) entryIds.add(m.entry1_id); if (m.entry2_id) entryIds.add(m.entry2_id); });
+
+      const { data: entries } = await db
+        .from('category_entries')
+        .select('id, players(full_name, club)')
+        .in('id', [...entryIds]);
+
+      const nameMap = {};
+      (entries || []).forEach(e => { nameMap[e.id] = e.players?.full_name || 'Unknown'; });
+
+      let html = '';
+      cats.forEach(cat => {
+        const catMatches = matches.filter(m => m.category_id === cat.id);
+        if (catMatches.length === 0) return;
+
+        const maxRound = Math.max(...catMatches.map(m => m.round));
+        const final = catMatches.find(m => m.round === maxRound);
+        if (!final) return;
+
+        const champion = final.winner_entry_id;
+        const runnerUp = final.entry1_id === champion ? final.entry2_id : final.entry1_id;
+
+        const semis = catMatches.filter(m => m.round === maxRound - 1);
+        const thirds = semis
+          .map(m => (m.entry1_id === m.winner_entry_id ? m.entry2_id : m.entry1_id))
+          .filter(Boolean);
+
+        html += `<div class="mr-cat"><div class="mr-cat-name">${cat.name}</div>`;
+        if (champion) html += `<div class="mr-row"><span class="mr-medal">🥇</span><span class="mr-name">${nameMap[champion] || 'Unknown'}</span></div>`;
+        if (runnerUp) html += `<div class="mr-row"><span class="mr-medal">🥈</span><span class="mr-name">${nameMap[runnerUp] || 'Unknown'}</span></div>`;
+        thirds.forEach(id => {
+          html += `<div class="mr-row"><span class="mr-medal">🥉</span><span class="mr-name">${nameMap[id] || 'Unknown'}</span></div>`;
+        });
+        html += `</div>`;
+      });
+
+      return html || '<div class="mr-empty">No results recorded yet.</div>';
     }
 
     document.getElementById('modal-close').addEventListener('click', () => {

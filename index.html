@@ -8,6 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/home.css">
+<style>
+.app-modal-overlay.open{display:flex;position:fixed;inset:0;background:#0a0a0a;z-index:99999;align-items:stretch;justify-content:stretch;padding:0;}
+.app-modal{width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;display:flex;flex-direction:column;padding:0;overflow-y:auto;}
+.app-modal-back{position:sticky;top:0;left:0;z-index:10;display:flex;align-items:center;gap:8px;background:#0a0a0a;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;border:none;color:var(--text);font-family:inherit;font-size:14px;font-weight:700;width:100%;text-align:left;}
+.app-modal-back .arrow{font-size:18px;color:var(--accent);}
+.app-modal-close{display:none;}
+.app-modal h2,.app-modal .sub{padding-left:20px;padding-right:20px;}
+.app-slider{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px;}
+.app-slide img{width:100%;max-height:70vh;object-fit:contain;}
+</style>
 </head>
 <body class="home-page">
 
@@ -167,6 +177,12 @@
       </div>
       <div class="tournament-showcase">
         <div class="showcase-left">
+          <div class="countdown" id="countdown">
+            <div class="cd-item"><div class="cd-num" id="cd-days">–</div><div class="cd-lab">Days</div></div>
+            <div class="cd-item"><div class="cd-num" id="cd-hours">–</div><div class="cd-lab">Hrs</div></div>
+            <div class="cd-item"><div class="cd-num" id="cd-mins">–</div><div class="cd-lab">Min</div></div>
+            <div class="cd-item"><div class="cd-num" id="cd-secs">–</div><div class="cd-lab">Sec</div></div>
+          </div>
           <div class="live-counter-large">
             <div class="counter-item">
               <div class="counter-num" id="total-live">–</div>
@@ -425,6 +441,26 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo";
     const TOURNAMENT_ID     = "0412efac-41e8-4071-9a55-c4029bb70e7d";
 
+    const EVENT_START = new Date("2026-08-22T13:00:00+03:00");
+    const EVENT_END   = new Date("2026-08-23T19:00:00+03:00");
+
+    function updateCountdown(){
+      const el = document.getElementById('countdown');
+      const now = new Date();
+      if (now > EVENT_END) { el.innerHTML = '<div class="cd-live">Event has ended</div>'; return; }
+      if (now >= EVENT_START) { el.innerHTML = '<div class="cd-live">🔴 Live now</div>'; return; }
+      const diff = EVENT_START - now;
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-days').textContent = days;
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function updateCounters() {
@@ -467,7 +503,9 @@
 
 <div class="app-modal-overlay" id="appModal">
   <div class="app-modal">
-    <button class="app-modal-close" onclick="document.getElementById('appModal').classList.remove('open')">✕</button>
+    <button class="app-modal-back" onclick="document.getElementById('appModal').classList.remove('open')">
+      <span class="arrow">←</span> Back to BARENA
+    </button>
     <h2>Get the <span style="color:var(--accent)">BArena</span> App</h2>
     <p class="sub">Every sport. Every tournament. Everywhere.</p>
 

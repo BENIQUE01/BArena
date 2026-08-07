@@ -45,6 +45,7 @@
 <script>
   const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
+  const KITTA_ID       = 'f8518a6d-9963-4e3b-9548-d7e1374174f9';
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -57,6 +58,7 @@
       .from('tournaments')
       .select('id, name, slug, status, start_date, end_date, venue, sport_id, institution_id')
       .eq('is_public', true)
+      .eq('institution_id', KITTA_ID)
       .not('start_date', 'is', null)
       .order('start_date', { ascending: false });
 
@@ -140,7 +142,7 @@
                       : 'Completed';
    const href = e.slug === 'banana-smash-s04' ? 'kiambu/s04/index.html'
                : e.slug === 'banana-smash-s2-1782044002661' ? 'kiambu/s02/index.html'
-               : '#';
+               : 'kiambu/index.html';
 
     return `
     <a class="event-row" href="${href}">
