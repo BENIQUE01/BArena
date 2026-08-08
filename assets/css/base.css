@@ -4,6 +4,7 @@
     the whole site at once.
     ============================================================ */
   :root{
+    color-scheme: dark;
     /* --- Colors --- */
     --bg:            #0d1117;   /* main background */
     --bg-panel:      #161b22;   /* card / panel background */
@@ -202,7 +203,7 @@ body.kitta-page > * {
     .nav-burger{display:flex; order:3;}
     .nav-cta{order:2; font-size:12px; padding:9px 16px; margin-right:6px;}
     .navlinks{
-      position:fixed; top:0; right:0; height:100vh; width:min(78vw,320px);
+      position:fixed; top:0; right:0; height:100vh; height:100dvh; width:min(78vw,320px);
       background:rgba(13,17,23,0.98); backdrop-filter:blur(14px);
       flex-direction:column; align-items:flex-start; gap:0;
       padding:88px 28px 28px;

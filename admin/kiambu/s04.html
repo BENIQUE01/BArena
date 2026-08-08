@@ -191,7 +191,7 @@
           <td>${row.players?.id ? `<a href="../../player.html?id=${row.players.id}" target="_blank" style="color:inherit; text-decoration:none; border-bottom:1px dotted var(--text-dim);">${row.players.full_name}</a>` : (row.players?.full_name ?? '—')}</td>
           <td>${row.players?.phone ?? '—'}</td>
           <td>${row.categories?.name ?? '—'}</td>
-          <td>${row.players?.global_rating ?? '<span style="color:var(--text-dim)">New</span>'}</td>
+          <td>${row.players?.player_sport_ratings?.[0]?.rating ?? '<span style="color:var(--text-dim)">New</span>'}</td>
           <td>${row.mpesa_code ?? '<span style="color:var(--text-dim)">none</span>'}</td>
           <td><span class="badge ${row.payment_status === 'confirmed' ? 'confirmed' : 'pending'}">${row.payment_status}</span></td>
           <td>
