@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Profile — BArena</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+<link rel="shortcut icon" href="assets/images/favicon/favicon.ico">
+<meta property="og:type" content="profile">
+<meta id="ogTitle" property="og:title" content="Player Profile — BArena">
+<meta id="ogDesc" property="og:description" content="Check out this player's stats, rating, and badges on BArena.">
+<meta property="og:image" content="https://benique01.github.io/BArena/assets/images/hero.jpg">
+<style>
+.profile-wrap{ max-width:760px; margin:0 auto; padding:40px 24px 80px; }
+.profile-loading, .profile-error{ text-align:center; padding:100px 24px; color:var(--text-dim); }
+.profile-error .icon{ font-size:36px; margin-bottom:12px; }
+
+.profile-header{
+  display:flex; align-items:center; gap:20px; margin-bottom:28px;
+  background:var(--bg-panel); border:1px solid var(--line); border-radius:16px; padding:24px;
+}
+.profile-avatar{
+  width:88px; height:88px; border-radius:50%; object-fit:cover; flex-shrink:0;
+  border:2px solid var(--accent); background:var(--bg);
+}
+.profile-avatar-fallback{
+  width:88px; height:88px; border-radius:50%; flex-shrink:0;
+  border:2px solid var(--accent); background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-size:32px; color:var(--accent);
+}
+.profile-name{ font-family:var(--font-display); font-size:28px; text-transform:uppercase; letter-spacing:.01em; line-height:1.1; margin-bottom:6px; }
+.profile-meta{ color:var(--text-dim); font-size:13.5px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.profile-meta .dot{ opacity:.5; }
+.profile-passport{ font-family:var(--font-mono); font-size:11px; color:var(--accent2); margin-top:6px; }
+
+.profile-stats{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:28px;
+}
+@media(max-width:560px){ .profile-stats{ grid-template-columns:repeat(2,1fr); } }
+.profile-stat{ background:var(--bg-panel); padding:18px 14px; text-align:center; }
+.profile-stat .num{ font-family:var(--font-mono); font-weight:700; font-size:24px; color:var(--accent2); }
+.profile-stat .lab{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-top:4px; }
+
+.profile-section{ margin-bottom:28px; }
+.profile-section h2{ font-family:var(--font-display); font-size:18px; text-transform:uppercase; margin-bottom:14px; letter-spacing:.01em; }
+
+.form-strip{ display:flex; gap:6px; margin-bottom:6px; }
+.form-pip{
+  width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:11px; font-weight:700;
+}
+.form-pip.w{ background:rgba(41,182,246,0.15); color:var(--accent2); border:1px solid rgba(41,182,246,0.3); }
+.form-pip.l{ background:rgba(255,106,106,0.1); color:#ff6a6a; border:1px solid rgba(255,106,106,0.25); }
+
+.badges-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }
+.badge-card{
+  background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:16px 12px;
+  text-align:center;
+}
+.badge-icon{ font-size:28px; margin-bottom:8px; }
+.badge-name{ font-weight:700; font-size:13px; margin-bottom:3px; }
+.badge-desc{ font-size:10.5px; color:var(--text-dim); line-height:1.4; }
+.badge-date{ font-family:var(--font-mono); font-size:9.5px; color:var(--accent2); margin-top:6px; }
+
+.medals-list{ display:flex; flex-direction:column; gap:8px; }
+.medal-row{
+  display:flex; align-items:center; gap:12px; background:var(--bg-panel);
+  border:1px solid var(--line); border-radius:10px; padding:12px 16px;
+}
+.medal-icon{ font-size:22px; flex-shrink:0; }
+.medal-info{ flex:1; }
+.medal-tournament{ font-weight:600; font-size:13.5px; }
+.medal-detail{ font-size:11.5px; color:var(--text-dim); margin-top:2px; }
+
+.empty-note{ color:var(--text-dim); font-size:13px; padding:20px 0; text-align:center; }
+
+.share-bar{ display:flex; gap:10px; flex-wrap:wrap; }
+.share-btn{
+  display:inline-flex; align-items:center; gap:8px; background:var(--bg-panel); border:1px solid var(--line);
+  color:var(--text); padding:11px 18px; border-radius:8px; font-size:13px; font-weight:600;
+  text-decoration:none; cursor:pointer; transition:border-color .15s;
+}
+.share-btn:hover{ border-color:var(--accent); }
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="brand">BAR<span>ENA</span></div>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="tournaments.html">Tournaments</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+    </div>
+    <a class="nav-cta" href="index.html">← Site</a>
+    <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
+    <label for="nav-toggle" class="nav-scrim"></label>
+  </nav>
+
+  <div class="profile-wrap" id="profileWrap">
+    <div class="profile-loading" id="loadingState">Loading player…</div>
+  </div>
+
+  <footer>
+    <div class="org">BARENA</div>
+    Global Tournament Management Platform
+  </footer>
+
+  <script>
+    const SUPABASE_URL  = 'https://xtbvzdupauxuxchhmshd.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YnZ6ZHVwYXV4dXhjaGhtc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzA0ODgsImV4cCI6MjA5MzcwNjQ4OH0.M9nqtyVj0YCH1v3P0cJ2OfHBHyH4tn0BReNDWWalTlo';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const params = new URLSearchParams(window.location.search);
+    const playerId = params.get('id');
+
+    function initials(name){
+      return (name || '?').split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+    }
+
+    function formatDate(d){
+      if (!d) return '';
+      return new Date(d).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' });
+    }
+
+    const MEDAL_ICON = { gold: '🥇', silver: '🥈', bronze: '🥉' };
+
+    async function loadProfile(){
+      const wrap = document.getElementById('profileWrap');
+
+      if (!playerId){
+        wrap.innerHTML = `<div class="profile-error"><div class="icon">🏓</div><h3>No player specified</h3><p>This link is missing a player ID.</p></div>`;
+        return;
+      }
+
+      const { data: player, error: playerErr } = await db
+        .from('players')
+        .select('id, full_name, club, photo_url, global_rating, sport_passport_id, dominant_hand, institution_id')
+        .eq('id', playerId)
+        .maybeSingle();
+
+      if (playerErr || !player){
+        wrap.innerHTML = `<div class="profile-error"><div class="icon">🔍</div><h3>Player not found</h3><p>This profile doesn't exist or may have been removed.</p></div>`;
+        return;
+      }
+
+      document.title = `${player.full_name} — BArena Player Profile`;
+      document.getElementById('ogTitle').setAttribute('content', `${player.full_name} — BArena Player Profile`);
+      document.getElementById('ogDesc').setAttribute('content', `${player.club || 'BArena Player'} · Rating ${player.global_rating || '—'} · View stats, badges, and medals on BArena.`);
+
+      // Rating / games / streak — from player_sport_ratings (table tennis)
+      const { data: ratingRow } = await db
+        .from('player_sport_ratings')
+        .select('rating, games_played, peak_rating, current_streak, form_results')
+        .eq('player_id', playerId)
+        .maybeSingle();
+
+      // Win/Loss — derive from matches via this player's category_entries
+      const { data: entries } = await db
+        .from('category_entries')
+        .select('id')
+        .eq('player_id', playerId);
+      const entryIds = (entries || []).map(e => e.id);
+
+      let wins = 0, losses = 0;
+      if (entryIds.length){
+        const { data: matches } = await db
+          .from('matches')
+          .select('winner_entry_id, entry1_id, entry2_id, status')
+          .eq('status', 'completed')
+          .or(`entry1_id.in.(${entryIds.join(',')}),entry2_id.in.(${entryIds.join(',')})`);
+        (matches || []).forEach(m => {
+          if (!m.winner_entry_id) return;
+          if (entryIds.includes(m.winner_entry_id)) wins++;
+          else losses++;
+        });
+      }
+
+      // Badges
+      const { data: badgeRows } = await db
+        .from('player_badges')
+        .select('badge_id, earned_at, badge_definitions(name, description, icon)')
+        .eq('player_id', playerId)
+        .order('earned_at', { ascending: false });
+
+      // Medals
+      const { data: medalRows } = await db
+        .from('player_medals')
+        .select('medal, placement, earned_at, tournaments(name)')
+        .eq('player_id', playerId)
+        .order('earned_at', { ascending: false });
+
+      render(player, ratingRow, wins, losses, badgeRows || [], medalRows || []);
+    }
+
+    function render(player, ratingRow, wins, losses, badges, medals){
+      const wrap = document.getElementById('profileWrap');
+      const rating = ratingRow?.rating || player.global_rating || 1200;
+      const gamesPlayed = ratingRow?.games_played ?? (wins + losses);
+      const peak = ratingRow?.peak_rating || rating;
+      const streak = ratingRow?.current_streak ?? 0;
+      const streakLabel = streak > 0 ? `W${streak}` : streak < 0 ? `L${Math.abs(streak)}` : '—';
+      const form = ratingRow?.form_results || [];
+
+      const avatarHtml = player.photo_url
+        ? `<img class="profile-avatar" src="${player.photo_url}" alt="${player.full_name}">`
+        : `<div class="profile-avatar-fallback">${initials(player.full_name)}</div>`;
+
+      const formHtml = form.length
+        ? `<div class="form-strip">${form.map(r => `<div class="form-pip ${r === 'W' ? 'w' : 'l'}">${r}</div>`).join('')}</div>
+           <div class="empty-note" style="padding:4px 0 0; text-align:left;">Recent form (last ${form.length})</div>`
+        : '';
+
+      const badgesHtml = badges.length
+        ? `<div class="badges-grid">${badges.map(b => `
+            <div class="badge-card">
+              <div class="badge-icon">${b.badge_definitions?.icon || '🏅'}</div>
+              <div class="badge-name">${b.badge_definitions?.name || b.badge_id}</div>
+              <div class="badge-desc">${b.badge_definitions?.description || ''}</div>
+              <div class="badge-date">${formatDate(b.earned_at)}</div>
+            </div>`).join('')}</div>`
+        : `<div class="empty-note">No badges earned yet — check back after the next tournament.</div>`;
+
+      const medalsHtml = medals.length
+        ? `<div class="medals-list">${medals.map(m => `
+            <div class="medal-row">
+              <div class="medal-icon">${MEDAL_ICON[m.medal] || '🎖️'}</div>
+              <div class="medal-info">
+                <div class="medal-tournament">${m.tournaments?.name || 'Tournament'}</div>
+                <div class="medal-detail">${m.medal ? m.medal.charAt(0).toUpperCase() + m.medal.slice(1) : ''}${m.placement ? ` · Placed #${m.placement}` : ''} · ${formatDate(m.earned_at)}</div>
+              </div>
+            </div>`).join('')}</div>`
+        : `<div class="empty-note">No medals yet — this player's story is just getting started.</div>`;
+
+      const shareUrl = window.location.href;
+      const shareText = encodeURIComponent(`Check out ${player.full_name}'s BArena player profile — Rating ${rating}, ${wins}W-${losses}L 🏓`);
+
+      wrap.innerHTML = `
+        <div class="profile-header">
+          ${avatarHtml}
+          <div>
+            <div class="profile-name">${player.full_name}</div>
+            <div class="profile-meta">
+              ${player.club ? `<span>${player.club}</span>` : ''}
+              ${player.dominant_hand ? `<span class="dot">·</span><span>${player.dominant_hand === 'right' ? 'Right' : 'Left'}-handed</span>` : ''}
+            </div>
+            ${player.sport_passport_id ? `<div class="profile-passport">${player.sport_passport_id}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="num">${rating}</div><div class="lab">Rating</div></div>
+          <div class="profile-stat"><div class="num">${wins}-${losses}</div><div class="lab">Win – Loss</div></div>
+          <div class="profile-stat"><div class="num">${peak}</div><div class="lab">Peak Rating</div></div>
+          <div class="profile-stat"><div class="num">${streakLabel}</div><div class="lab">Current Streak</div></div>
+        </div>
+
+        ${formHtml ? `<div class="profile-section">${formHtml}</div>` : ''}
+
+        <div class="profile-section">
+          <h2>Badges</h2>
+          ${badgesHtml}
+        </div>
+
+        <div class="profile-section">
+          <h2>Medals</h2>
+          ${medalsHtml}
+        </div>
+
+        <div class="profile-section">
+          <h2>Share</h2>
+          <div class="share-bar">
+            <a class="share-btn" href="https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener">📱 Share on WhatsApp</a>
+            <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); this.textContent='✓ Copied!'; setTimeout(()=>this.textContent='🔗 Copy Link',1500)">🔗 Copy Link</button>
+          </div>
+        </div>
+      `;
+    }
+
+    loadProfile();
+  </script>
+
+<div class="scroll-progress" id="scroll-progress"></div>
+<script>
+  const navEl = document.querySelector('nav');
+  const progressEl = document.getElementById('scroll-progress');
+  function onScroll(){
+    const y = window.scrollY;
+    navEl.classList.toggle('scrolled', y > 30);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressEl.style.width = max > 0 ? (y / max * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+</script>
+</body>
+</html>
