@@ -52,6 +52,8 @@
 .mpesa-badge .mpesa-till{color:#fff;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;letter-spacing:.03em;line-height:1.3;}
 .seat-badge{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text,#eee);padding:9px 16px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;}
 .seat-badge b{color:var(--accent,#ff7a28);margin-left:4px;}
+.live-ticker{background:rgba(220,40,40,0.08); border-bottom:1px solid rgba(220,40,40,0.25); position:sticky; top:0; z-index:29;}
+@keyframes tickerPulse{0%{transform:scale(1);opacity:1}70%{transform:scale(2);opacity:0}100%{opacity:0}}
 </style>
 </head>
 <body class="home-page">
@@ -125,6 +127,16 @@
     <label for="nav-toggle" class="nav-burger"><span></span><span></span><span></span></label>
     <label for="nav-toggle" class="nav-scrim"></label>
   </nav>
+
+  <div class="live-ticker" id="liveTicker" style="display:none;">
+    <div class="wrap" style="display:flex; align-items:center; gap:10px; padding:10px 24px;">
+      <span style="display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#ff5c5c; flex-shrink:0;">
+        <span style="width:7px; height:7px; border-radius:50%; background:#ff5c5c; box-shadow:0 0 8px #ff5c5c; animation:tickerPulse 1.2s infinite;"></span>
+        Live
+      </span>
+      <span id="tickerText" style="font-size:13.5px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+    </div>
+  </div>
 
   <header class="hero">
     <div class="hero-bg">
@@ -552,6 +564,69 @@
     updateCounters();
     sb.channel('home-entries')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'category_entries' }, updateCounters)
+      .subscribe();
+
+    /* ── LIVE MATCH TICKER ────────────────────────────────── */
+    const TICKER_CATEGORY_IDS = [
+      "a6843ff0-0643-4328-800c-f27065e8df4d",
+      "6b34289d-b1e9-4700-bb39-fc109573147b",
+      "9bc6d79a-f673-46e0-930c-484c0bb0d974"
+    ];
+    let tickerMatches = [];
+    let tickerIndex = 0;
+    let tickerRotateTimer = null;
+
+    async function loadLiveTicker(){
+      const { data: matches, error } = await sb
+        .from('matches')
+        .select('id, court, entry1_id, entry2_id, category_id, categories(name)')
+        .in('category_id', TICKER_CATEGORY_IDS)
+        .eq('status', 'live');
+
+      const tickerEl = document.getElementById('liveTicker');
+      if (error || !matches || matches.length === 0){
+        tickerEl.style.display = 'none';
+        clearInterval(tickerRotateTimer);
+        return;
+      }
+
+      const entryIds = [...new Set(matches.flatMap(m => [m.entry1_id, m.entry2_id]).filter(Boolean))];
+      const { data: entries } = await sb
+        .from('category_entries')
+        .select('id, players(full_name)')
+        .in('id', entryIds);
+
+      const nameMap = {};
+      (entries || []).forEach(e => { nameMap[e.id] = e.players?.full_name || 'TBD'; });
+
+      tickerMatches = matches.map(m => {
+        const p1 = nameMap[m.entry1_id] || 'TBD';
+        const p2 = nameMap[m.entry2_id] || 'TBD';
+        const court = m.court ? ` — Table ${m.court}` : '';
+        const cat = m.categories?.name ? ` — ${m.categories.name}` : '';
+        return `Now Playing: ${p1} vs ${p2}${court}${cat}`;
+      });
+
+      tickerEl.style.display = 'block';
+      tickerIndex = 0;
+      renderTickerText();
+
+      clearInterval(tickerRotateTimer);
+      if (tickerMatches.length > 1){
+        tickerRotateTimer = setInterval(() => {
+          tickerIndex = (tickerIndex + 1) % tickerMatches.length;
+          renderTickerText();
+        }, 4000);
+      }
+    }
+
+    function renderTickerText(){
+      document.getElementById('tickerText').textContent = tickerMatches[tickerIndex] || '';
+    }
+
+    loadLiveTicker();
+    sb.channel('live-ticker-matches')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, loadLiveTicker)
       .subscribe();
   </script>
 
