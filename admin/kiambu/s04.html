@@ -68,6 +68,7 @@
               <th>Name</th>
               <th>Phone</th>
               <th>Category</th>
+              <th>Rating</th>
               <th>M-Pesa Code</th>
               <th>Status</th>
               <th>Action</th>
@@ -166,30 +167,31 @@
 
     async function loadEntries(){
       const tbody = document.getElementById('entries-body');
-      tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">Loading…</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="admin-empty">Loading…</td></tr>`;
 
       const { data, error } = await sb
         .from('category_entries')
-        .select('id, payment_status, mpesa_code, registered_at, category_id, players(full_name, phone), categories(name)')
+        .select('id, payment_status, mpesa_code, registered_at, category_id, players(id, full_name, phone, global_rating), categories(name)')
         .in('category_id', Object.keys(CATEGORY_FEES))
         .order('registered_at', { ascending: false });
 
       if (error){
-        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">Couldn't load entries — ${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="admin-empty">Couldn't load entries — ${error.message}</td></tr>`;
         return;
       }
 
       if (!data || data.length === 0){
-        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">No registrations yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="admin-empty">No registrations yet.</td></tr>`;
         updateCounters([]);
         return;
       }
 
       tbody.innerHTML = data.map(row => `
         <tr>
-          <td>${row.players?.full_name ?? '—'}</td>
+          <td>${row.players?.id ? `<a href="../../player.html?id=${row.players.id}" target="_blank" style="color:inherit; text-decoration:none; border-bottom:1px dotted var(--text-dim);">${row.players.full_name}</a>` : (row.players?.full_name ?? '—')}</td>
           <td>${row.players?.phone ?? '—'}</td>
           <td>${row.categories?.name ?? '—'}</td>
+          <td>${row.players?.global_rating ?? '<span style="color:var(--text-dim)">New</span>'}</td>
           <td>${row.mpesa_code ?? '<span style="color:var(--text-dim)">none</span>'}</td>
           <td><span class="badge ${row.payment_status === 'confirmed' ? 'confirmed' : 'pending'}">${row.payment_status}</span></td>
           <td>

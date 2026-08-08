@@ -560,12 +560,20 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
           categoryLabel = catName.split(' — ')[0];
           entryTable = 'category_entries';
 
-          const { data: player, error: playerErr } = await sb.from('players').insert({ full_name, phone }).select('id').single();
-          if (playerErr) throw playerErr;
+          // Reuse an existing player record if this phone number is already in the system
+          let playerId;
+          const { data: existingPlayers } = await sb.from('players').select('id').eq('phone', phone).limit(1);
+          if (existingPlayers && existingPlayers.length > 0) {
+            playerId = existingPlayers[0].id;
+          } else {
+            const { data: newPlayer, error: playerErr } = await sb.from('players').insert({ full_name, phone }).select('id').single();
+            if (playerErr) throw playerErr;
+            playerId = newPlayer.id;
+          }
 
           const { data: entry, error: entryErr } = await sb
             .from('category_entries')
-            .insert({ category_id, player_id: player.id, payment_status: 'pending', mpesa_code: mpesa_code || null })
+            .insert({ category_id, player_id: playerId, payment_status: 'pending', mpesa_code: mpesa_code || null })
             .select('id')
             .single();
           if (entryErr) throw entryErr;
@@ -593,7 +601,6 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
         refreshCounts();
         loadConfirmedPlayers();
 
-        document.getElementById('pay-phone').value = phone;
         document.getElementById('pay-card').style.display = 'block';
         document.getElementById('pay-card').dataset.entryId = entryId;
         document.getElementById('pay-card').dataset.entryTable = entryTable;
