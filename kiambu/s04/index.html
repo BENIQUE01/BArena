@@ -748,7 +748,6 @@ button.ghost{width:100%;background:var(--surface);border:1px solid var(--accent)
 
         lookupMsg.textContent = `Found it! Complete payment for ${found.full_name.split(' ')[0]} below.`;
         lookupMsg.classList.add('ok');
-        document.getElementById('pay-phone').value = phone;
         document.getElementById('pay-card').style.display = 'block';
         document.getElementById('pay-card').dataset.entryId = found.id;
         document.getElementById('pay-card').dataset.entryTable = foundType;
