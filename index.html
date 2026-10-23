@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BARENA — Global Tournament Management Platform</title>
+<meta name="description" content="BArena runs tournaments from your phone: registration, live scoring, brackets and player ratings for any sport.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/home.css">
+<link rel="stylesheet" href="assets/css/app-promo.css">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
@@ -17,12 +19,12 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="BArena — Tournament management for every league">
   <meta property="og:description" content="Plan, run, and share tournaments with a lightweight platform built for sports organizers and event teams.">
-  <meta property="og:image" content="https://benique01.github.io/BArena/assets/images/hero.jpg">
+  <meta property="og:image" content="https://benique01.github.io/BArena/assets/images/marketing/og-share.jpg">
   <meta property="og:url" content="https://benique01.github.io/BArena/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="BArena — Tournament management for every league">
   <meta name="twitter:description" content="Plan, run, and share tournaments with a lightweight platform built for sports organizers and event teams.">
-  <meta name="twitter:image" content="https://benique01.github.io/BArena/assets/images/hero.jpg">
+  <meta name="twitter:image" content="https://benique01.github.io/BArena/assets/images/marketing/og-share.jpg">
 <style>
 .app-modal-overlay.open{display:flex;position:fixed;inset:0;background:#0a0a0a;z-index:99999;align-items:stretch;justify-content:stretch;padding:0;}
 .app-modal{width:100%;height:100%;max-width:100%;max-height:100%;border-radius:0;display:flex;flex-direction:column;padding:0;overflow-y:auto;}
@@ -66,6 +68,16 @@
     <div class="carousel-track" id="carouselTrack">
 
       <div class="carousel-slide is-active">
+        <img src="assets/images/marketing/hero-paper-football.webp" alt="A crumpled paper bracket on a table at a football tournament" width="1600" height="900">
+        <div class="carousel-caption">
+          <div class="carousel-tag"><span class="carousel-tag-dot"></span>BArena app</div>
+          <h2>Stop running tournaments on paper</h2>
+          <p>Brackets, live scores and results on every phone. Built for organizers, players and spectators.</p>
+          <a href="#app">See the app &rarr;</a>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
         <img src="assets/images/slide1.jpg" alt="Banana Smash S04">
         <div class="carousel-caption">
           <div class="carousel-tag">
@@ -75,19 +87,6 @@
           <h2>Banana Smash S04</h2>
           <p>Kiambu County's flagship table tennis tournament. Aug 22–23 · ACK Emanuel Church, Karuri.</p>
           <a href="kiambu/s04/">Register Now →</a>
-        </div>
-      </div>
-
-      <div class="carousel-slide">
-        <img src="assets/images/slide2.jpg" alt="BARENA Platform">
-        <div class="carousel-caption">
-          <div class="carousel-tag">
-            <span class="carousel-tag-dot"></span>
-            Platform
-          </div>
-          <h2>Global Tournament Management</h2>
-          <p>From a local league to continental championships — one platform, infinite possibilities.</p>
-          <a href="features.html">Explore Features →</a>
         </div>
       </div>
 
@@ -212,6 +211,36 @@
           <div class="metric-value">3</div>
           <div class="metric-label">Categories Open</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="app-promo" id="app">
+    <div class="app-promo-inner">
+      <div>
+        <h2>Run the whole tournament from your phone</h2>
+        <p>Create the event, take registrations, score matches live and share the bracket. Players follow their own matches and ratings. Spectators watch results as they happen.</p>
+        <div class="app-promo-actions">
+          <a class="btn-app" data-app-link>Get the Android app</a>
+          <a class="btn-ghost" href="tournaments.html">Browse tournaments</a>
+        </div>
+        <p class="app-promo-note" data-app-note></p>
+      </div>
+      <div class="app-phones">
+        <img loading="lazy" width="432" height="960" src="assets/images/app-screens/web/15-live-scoring-score-grid.webp" alt="BArena live scoring screen">
+        <img loading="lazy" width="432" height="960" src="assets/images/app-screens/web/19-final-standings-podium.webp" alt="BArena final standings podium">
+        <img loading="lazy" width="432" height="960" src="assets/images/app-screens/web/24-player-rating-over-time.webp" alt="BArena player rating over time">
+      </div>
+    </div>
+  </section>
+
+  <section class="paper-strip" aria-labelledby="paperTitle">
+    <div class="paper-strip-inner">
+      <h2 id="paperTitle">Fixtures on paper get lost. On your phone they do not.</h2>
+      <div class="paper-grid">
+        <figure><img loading="lazy" width="800" height="533" src="assets/images/marketing/strip-pool.webp" alt="Scribbled pool fixtures next to a phone"><figcaption>Pool, darts, table tennis: one bracket everyone can open.</figcaption></figure>
+        <figure><img loading="lazy" width="800" height="450" src="assets/images/marketing/strip-ice.webp" alt="Heat sheets and a phone at an ice rink"><figcaption>Heats and finals update the moment a score is entered.</figcaption></figure>
+        <figure><img loading="lazy" width="800" height="533" src="assets/images/marketing/strip-bracket.webp" alt="Hands sorting a handwritten tournament bracket beside a phone"><figcaption>No more rewriting the bracket after every match.</figcaption></figure>
       </div>
     </div>
   </section>
@@ -657,7 +686,7 @@
 
     <div class="app-dots" id="appDots"></div>
 
-    <div class="app-modal-cta">📱 Download link coming soon</div>
+    <a class="app-modal-cta" data-app-link>Get the Android app</a>
   </div>
 </div>
 
@@ -723,5 +752,6 @@
     updateProgress();
   }
 </script>
+<script src="assets/js/app-links.js"></script>
 </body>
 </html>

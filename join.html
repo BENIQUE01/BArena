@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Join a tournament — BArena</title>
+<meta name="description" content="Open this tournament invite in the BArena app.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0d1117">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+<link rel="apple-touch-icon" href="assets/images/favicon/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0d1117;color:#e8edf3;font-family:Inter,system-ui,sans-serif}
+main{width:100%;max-width:380px;text-align:center}
+img.logo{width:72px;height:72px;border-radius:18px;margin-bottom:20px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;margin:0 0 10px;letter-spacing:.5px}
+p{color:#9aa4b2;line-height:1.55;margin:0 0 20px}
+.code{display:inline-block;margin:0 0 22px;padding:8px 16px;border:1px dashed rgba(255,255,255,.25);border-radius:10px;font-family:ui-monospace,monospace;letter-spacing:3px;color:#f5c518}
+.btn{display:block;margin:12px 0;padding:15px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px}
+.primary{background:#ff6a3d;color:#fff}
+.secondary{border:1px solid rgba(255,255,255,.18);color:#e8edf3}
+.btn[aria-disabled=true]{background:#2a3140;color:#c9d1dc;border:0}
+.btn:focus-visible{outline:3px solid #29b6f6;outline-offset:3px}
+small{display:block;margin-top:22px;color:#6b7686;font-size:12px}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="assets/images/favicon/android-chrome-192x192.png" alt="BArena">
+  <h1>Join on BArena</h1>
+  <p id="msg">Opening the app. If nothing happens, tap the button below.</p>
+  <div class="code" id="code" hidden></div>
+  <a class="btn primary" id="open" href="#">Open in BArena</a>
+  <a class="btn secondary" data-app-link>Get the Android app</a>
+  <a class="btn secondary" href="tournaments.html">Browse tournaments</a>
+  <small>Sign in to the app with the same account, then your request goes to the organizer.</small>
+</main>
+<script src="assets/js/app-links.js"></script>
+<script>
+(function () {
+  var code = (new URLSearchParams(location.search).get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  var open = document.getElementById('open');
+  if (!code) {
+    document.getElementById('msg').textContent = 'This invite link has no code. Ask the organizer for a new QR.';
+    open.setAttribute('aria-disabled', 'true'); open.removeAttribute('href'); open.className = 'btn secondary';
+    return;
+  }
+  var box = document.getElementById('code'); box.textContent = code; box.hidden = false;
+  var cfg = window.BARENA_APP || {}, store = cfg.playStore || cfg.apk || '';
+  var isAndroid = /android/i.test(navigator.userAgent);
+  var deep = 'barena://join?code=' + code;
+  var target = deep;
+  if (isAndroid) {
+    target = 'intent://join?code=' + code + '#Intent;scheme=barena;package=com.barena.hub;' +
+      (store ? 'S.browser_fallback_url=' + encodeURIComponent(store) + ';' : '') + 'end';
+  }
+  open.href = target;
+  setTimeout(function () { location.href = target; }, 500);
+})();
+</script>
+</body>
+</html>

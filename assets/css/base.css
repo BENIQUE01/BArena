@@ -262,3 +262,4 @@ body.kitta-page > * {
   .reg-msg{margin-top:14px; font-size:13px; text-align:center;}
   .reg-msg.ok{color:var(--accent2);}
   .reg-msg.err{color:#ff6a6a;}
+a.app-modal-cta{display:block;text-align:center;text-decoration:none}
