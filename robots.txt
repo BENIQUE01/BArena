@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://benique01.github.io/BArena/sitemap.xml
