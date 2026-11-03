@@ -1,0 +1,4 @@
+(async function(){const L=document.getElementById("tl");let d=[];try{d=await BH.get("tournaments","select=id,name,slug,status,start_date,end_date,venue&is_public=eq.true&start_date=not.is.null&order=start_date.desc&limit=12")}catch(e){}
+const fd=x=>{const y=new Date(x);return isNaN(y)?"":y.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})},LB={live:"Live",done:"Finished",soon:"Upcoming"};
+L.innerHTML=d.length?d.map(t=>{const k=BH.kind(t);return`<a class="wc ${k}" href="watch.html?t=${encodeURIComponent(t.slug||t.id)}"><span class="bd ${k}">${LB[k]}</span><h3>${BH.E(t.name)}</h3><p>${BH.E(t.venue)}</p><small>${fd(t.start_date)}</small><i>Watch &rarr;</i></a>`}).join(""):'<p class="note">Events appear here as soon as they are published.</p>';
+BH.grid(document.getElementById("tgal"),window.T_STATIC||[],"tournaments",24)})();

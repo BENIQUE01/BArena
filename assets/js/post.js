@@ -1,0 +1,4 @@
+(async function(){const A=document.getElementById("a"),s=new URLSearchParams(location.search).get("p"),show=(p,html)=>{document.title=p.title+" | Barena Hub";A.innerHTML=(p.cover?`<img class="pcov" src="${BH.E(p.cover)}" alt="">`:"")+`<small>${BH.E(p.date)}</small><h2 style="margin:6px 0 24px;font-size:2.4rem">${BH.E(p.title)}</h2>${html}<p><a href="blog.html">&larr; All posts</a></p>`};
+const x=(window.POSTS||[]).find(z=>z.slug==s);if(x){show(x,x.body);return}A.innerHTML='<p class="note">Loading...</p>';
+try{const d=await BH.get("posts","select=*&published=eq.true&slug=eq."+encodeURIComponent(s)+"&limit=1");if(d[0]){show({title:d[0].title,date:(d[0].created_at||"").slice(0,10),cover:d[0].cover_url},BH.para(d[0].body||""));return}}catch(e){}
+A.innerHTML='<p>Post not found. <a href="blog.html">See all posts</a>.</p>'})();
